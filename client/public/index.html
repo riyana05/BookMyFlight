@@ -1,0 +1,1930 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Book My Flight ✈</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
+<style>
+:root{
+  --lav:#E6E6FA;--lav-mid:#C8B8E8;--lav-deep:#9B7EC8;
+  --purple:#6B4FA0;--purple-dk:#4A2E7A;
+  --rose:#E8B4C8;--rose-dk:#C87898;
+  --pink:#E86FA0;
+  --green:#50C878;--green-dk:#2E9E58;
+  --glass:rgba(230,230,250,0.13);--gb:rgba(200,184,232,0.32);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'DM Sans',sans-serif;background:linear-gradient(135deg,#1A0A2E 0%,#2D1B4E 45%,#4A2070 75%,#200E3A 100%);min-height:100vh;overflow-x:hidden;}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background-image:
+    radial-gradient(1px 1px at 15% 25%,rgba(230,230,250,.7) 0%,transparent 100%),
+    radial-gradient(1px 1px at 75% 8%,rgba(230,230,250,.5) 0%,transparent 100%),
+    radial-gradient(1.5px 1.5px at 55% 65%,rgba(230,230,250,.45) 0%,transparent 100%),
+    radial-gradient(1px 1px at 38% 82%,rgba(200,184,232,.5) 0%,transparent 100%),
+    radial-gradient(1px 1px at 8% 55%,rgba(230,230,250,.4) 0%,transparent 100%),
+    radial-gradient(1px 1px at 92% 45%,rgba(230,230,250,.35) 0%,transparent 100%),
+    radial-gradient(1px 1px at 48% 18%,rgba(230,230,250,.5) 0%,transparent 100%),
+    radial-gradient(2px 2px at 68% 38%,rgba(232,180,200,.45) 0%,transparent 100%),
+    radial-gradient(1px 1px at 28% 92%,rgba(230,230,250,.3) 0%,transparent 100%),
+    radial-gradient(1px 1px at 88% 88%,rgba(230,230,250,.4) 0%,transparent 100%);
+  animation:twinkle 5s ease-in-out infinite alternate;}
+@keyframes twinkle{0%{opacity:.6}100%{opacity:1}}
+
+/* NAV */
+.nav{position:sticky;top:0;z-index:100;background:rgba(18,6,36,.88);backdrop-filter:blur(22px);border-bottom:1px solid var(--gb);padding:0 1.5rem;display:flex;align-items:center;justify-content:space-between;height:64px;gap:1rem;}
+.nav-logo{font-family:'Cormorant Garamond',serif;font-size:1.55rem;font-weight:700;background:linear-gradient(90deg,var(--lav),var(--rose));-webkit-background-clip:text;-webkit-text-fill-color:transparent;white-space:nowrap;}
+.nav-tabs{display:flex;gap:.15rem;flex-wrap:wrap;}
+.nav-tab{background:transparent;border:none;cursor:pointer;color:var(--lav-mid);font-family:'DM Sans',sans-serif;font-size:.75rem;font-weight:500;padding:.4rem .7rem;border-radius:20px;transition:all .2s;white-space:nowrap;}
+.nav-tab:hover{background:var(--glass);color:var(--lav);}
+.nav-tab.active{background:linear-gradient(135deg,var(--purple),var(--rose-dk));color:#fff;}
+.nav-right{font-size:.76rem;display:flex;align-items:center;gap:.6rem;flex-shrink:0;}
+.session-pill{display:flex;align-items:center;gap:.4rem;background:rgba(155,126,200,.15);border:1px solid rgba(155,126,200,.3);border-radius:14px;padding:.28rem .75rem;color:var(--lav-mid);}
+.email-pill{display:flex;align-items:center;gap:.4rem;background:rgba(155,126,200,.15);border:1px solid rgba(155,126,200,.3);border-radius:14px;padding:.28rem .75rem;color:var(--lav-mid);font-size:.74rem;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.signin-btn{background:linear-gradient(135deg,var(--purple),var(--rose-dk));border:none;border-radius:14px;color:#fff;padding:.36rem .9rem;font-size:.74rem;font-family:'DM Sans',sans-serif;cursor:pointer;font-weight:500;white-space:nowrap;}
+.signin-btn:hover{filter:brightness(1.08);}
+.logout-btn{background:rgba(200,184,232,.08);border:1px solid var(--gb);border-radius:8px;color:var(--lav-mid);cursor:pointer;padding:.32rem .72rem;font-size:.74rem;font-family:'DM Sans',sans-serif;transition:all .15s;}
+.logout-btn:hover{background:rgba(232,80,80,.12);color:#F08080;border-color:rgba(232,80,80,.28);}
+
+/* USER LOGIN MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(10,4,20,.72);backdrop-filter:blur(6px);z-index:300;display:flex;align-items:center;justify-content:center;padding:1.2rem;}
+.user-login-card{background:linear-gradient(145deg,rgba(200,184,232,.12),rgba(230,230,250,.05));border:1px solid var(--gb);border-radius:22px;padding:2.3rem 2rem 2rem;width:100%;max-width:380px;text-align:center;position:relative;backdrop-filter:blur(10px);}
+.modal-close{position:absolute;top:.85rem;right:1rem;background:transparent;border:none;color:var(--lav-mid);font-size:1.05rem;cursor:pointer;line-height:1;}
+.modal-close:hover{color:var(--lav);}
+.otp-input{letter-spacing:.6rem;text-align:center;font-size:1.35rem;font-weight:600;}
+.resend-row{display:flex;justify-content:space-between;align-items:center;font-size:.74rem;color:var(--lav-mid);margin:.5rem 0 1.1rem;}
+.change-email-link{cursor:pointer;text-decoration:underline;color:var(--lav-mid);background:none;border:none;font-size:.74rem;font-family:'DM Sans',sans-serif;}
+.resend-link{color:var(--rose);cursor:pointer;background:none;border:none;font-size:.74rem;font-family:'DM Sans',sans-serif;}
+.resend-link:disabled{color:var(--lav-mid);cursor:not-allowed;opacity:.6;text-decoration:none;}
+
+/* PAGE */
+.page{position:relative;z-index:1;min-height:calc(100vh - 64px);}
+
+/* HERO */
+.hero{text-align:center;padding:3.5rem 2rem 1.5rem;}
+.hero-eye{font-size:.7rem;letter-spacing:.2em;text-transform:uppercase;color:var(--rose);margin-bottom:.9rem;font-weight:500;}
+.hero-title{font-family:'Cormorant Garamond',serif;font-size:clamp(2.2rem,5.5vw,4.5rem);font-weight:300;line-height:1.1;color:var(--lav);margin-bottom:.6rem;}
+.hero-title em{font-style:italic;color:var(--rose);}
+.hero-sub{color:var(--lav-mid);font-size:.92rem;font-weight:300;}
+
+/* SEARCH */
+.search-wrap{padding:0 2rem;}
+.search-bar{background:rgba(200,184,232,.07);border:1px solid var(--gb);border-radius:50px;padding:.52rem 1.2rem;display:flex;align-items:center;gap:.7rem;max-width:460px;margin:0 auto 1.1rem;}
+.search-bar input{background:none;border:none;outline:none;color:var(--lav);font-family:'DM Sans',sans-serif;font-size:.86rem;flex:1;}
+.search-bar input::placeholder{color:rgba(200,184,232,.38);}
+.filter-row{display:flex;gap:.42rem;justify-content:center;flex-wrap:wrap;margin-bottom:1.3rem;}
+.chip{background:rgba(200,184,232,.07);border:1px solid var(--gb);border-radius:20px;padding:.28rem .88rem;color:var(--lav-mid);font-size:.76rem;cursor:pointer;transition:all .15s;font-weight:500;}
+.chip:hover,.chip.on{background:linear-gradient(135deg,var(--purple),var(--rose-dk));border-color:transparent;color:#fff;}
+
+/* DEALS */
+.deals-hdr{max-width:1160px;margin:1.4rem auto 1.1rem;padding:0 2rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.7rem;}
+.sec-title{font-family:'Cormorant Garamond',serif;font-size:1.85rem;font-weight:600;color:var(--lav);}
+.live-badge{display:flex;align-items:center;gap:.42rem;background:rgba(232,111,160,.12);border:1px solid var(--pink);border-radius:20px;padding:.28rem .82rem;color:var(--pink);font-size:.73rem;font-weight:600;letter-spacing:.05em;}
+.live-dot{width:7px;height:7px;border-radius:50%;background:var(--pink);animation:pulse 1.5s ease-in-out infinite;}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.65)}}
+.deals-grid{max-width:1160px;margin:0 auto;padding:0 2rem 2.5rem;display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:1.3rem;}
+
+/* DEAL CARD */
+.deal-card{background:linear-gradient(145deg,rgba(200,184,232,.09),rgba(230,230,250,.04));border:1px solid var(--gb);border-radius:20px;padding:1.35rem;cursor:pointer;transition:all .3s;position:relative;overflow:hidden;backdrop-filter:blur(8px);}
+.deal-card::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(232,180,200,.07),rgba(155,126,200,.07));opacity:0;transition:opacity .3s;}
+.deal-card:hover{transform:translateY(-4px);box-shadow:0 16px 38px rgba(107,79,160,.28);border-color:var(--lav-mid);}
+.deal-card:hover::before{opacity:1;}
+.deal-card.expired{opacity:.4;pointer-events:none;}
+.deal-card.featured{border-color:var(--rose);}
+.dbadge{position:absolute;top:.85rem;right:.85rem;background:linear-gradient(135deg,var(--purple),var(--lav-deep));color:#fff;font-size:.6rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:.2rem .58rem;border-radius:8px;}
+.deal-card.featured .dbadge{background:linear-gradient(135deg,var(--pink),var(--rose-dk));}
+.deal-route{display:flex;align-items:center;gap:.65rem;margin-bottom:.85rem;}
+.d-city{font-family:'Cormorant Garamond',serif;font-size:1.3rem;font-weight:600;color:var(--lav);line-height:1;}
+.d-city small{display:block;font-size:.7rem;color:var(--lav-mid);font-family:'DM Sans',sans-serif;font-weight:400;}
+.d-arrow{color:var(--rose);font-size:1.05rem;flex-shrink:0;}
+.deal-bottom{display:flex;justify-content:space-between;align-items:flex-end;margin-top:.85rem;padding-top:.85rem;border-top:1px solid rgba(200,184,232,.16);}
+.d-price{font-family:'Cormorant Garamond',serif;font-size:1.9rem;font-weight:700;color:var(--rose);line-height:1;}
+.d-price small{font-size:.9rem;color:var(--lav-mid);}
+.d-meta{text-align:right;}
+.d-airline{color:var(--lav-mid);font-size:.73rem;}
+.d-class{color:var(--lav);font-size:.8rem;font-weight:500;}
+.d-timer{margin-top:.6rem;font-size:.7rem;color:var(--rose-dk);display:flex;align-items:center;gap:.28rem;}
+.book-btn{width:100%;margin-top:.85rem;padding:.68rem;background:linear-gradient(135deg,var(--purple),var(--rose-dk));border:none;border-radius:10px;color:#fff;font-family:'DM Sans',sans-serif;font-size:.85rem;font-weight:600;cursor:pointer;transition:all .2s;letter-spacing:.03em;}
+.book-btn:hover{transform:scale(1.02);box-shadow:0 4px 15px rgba(107,79,160,.4);}
+
+/* MODAL */
+.overlay{position:fixed;inset:0;z-index:200;background:rgba(18,6,36,.9);backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;padding:1rem;animation:fadeIn .2s ease;}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.modal{background:linear-gradient(145deg,#2D1B4E,#1E0F38);border:1px solid var(--gb);border-radius:22px;width:100%;max-width:530px;max-height:92vh;overflow-y:auto;padding:1.85rem;position:relative;animation:slideUp .3s ease;}
+@keyframes slideUp{from{transform:translateY(16px);opacity:0}to{transform:translateY(0);opacity:1}}
+.modal-x{position:absolute;top:.9rem;right:.9rem;background:rgba(200,184,232,.1);border:1px solid var(--gb);border-radius:50%;width:32px;height:32px;color:var(--lav-mid);cursor:pointer;font-size:.95rem;display:flex;align-items:center;justify-content:center;transition:all .2s;}
+.modal-x:hover{background:rgba(200,184,232,.2);color:var(--lav);}
+.modal-title{font-family:'Cormorant Garamond',serif;font-size:1.7rem;font-weight:600;color:var(--lav);margin-bottom:.2rem;}
+.modal-sub{color:var(--lav-mid);font-size:.8rem;margin-bottom:1.3rem;}
+.route-disp{background:rgba(200,184,232,.07);border:1px solid var(--gb);border-radius:12px;padding:.85rem 1.05rem;display:flex;align-items:center;justify-content:space-between;margin-bottom:1.3rem;}
+.rc-lg{font-family:'Cormorant Garamond',serif;font-size:1.35rem;color:var(--lav);font-weight:600;}
+.rc-lg small{display:block;font-size:.68rem;color:var(--lav-mid);font-family:'DM Sans',sans-serif;}
+
+/* FORM */
+.fsec{margin-bottom:1rem;}
+.fsec label{display:block;font-size:.72rem;font-weight:600;color:var(--lav-mid);letter-spacing:.05em;text-transform:uppercase;margin-bottom:.42rem;}
+.finput{width:100%;padding:.67rem .9rem;background:rgba(200,184,232,.07);border:1px solid var(--gb);border-radius:10px;color:var(--lav);font-family:'DM Sans',sans-serif;font-size:.86rem;transition:border-color .2s;outline:none;}
+.finput::placeholder{color:rgba(200,184,232,.33);}
+.finput:focus{border-color:var(--lav-deep);background:rgba(200,184,232,.1);}
+.finput.err{border-color:#E85050;}
+.errtxt{color:#E85050;font-size:.7rem;margin-top:.25rem;}
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:.65rem;}
+select.finput option{background:#2D1B4E;}
+
+/* CALENDAR */
+.cal-wrap{background:rgba(200,184,232,.06);border:1px solid var(--gb);border-radius:14px;padding:1rem;margin-top:.42rem;}
+.cal-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:.85rem;}
+.cal-nav-btn{background:rgba(200,184,232,.1);border:1px solid var(--gb);border-radius:8px;color:var(--lav-mid);cursor:pointer;padding:.28rem .6rem;font-size:.85rem;transition:all .15s;}
+.cal-nav-btn:hover{background:rgba(200,184,232,.2);color:var(--lav);}
+.cal-nav-btn:disabled{opacity:.3;cursor:not-allowed;}
+.cal-month{font-family:'Cormorant Garamond',serif;font-size:1.1rem;color:var(--lav);font-weight:600;}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:.22rem;}
+.cal-dow{font-size:.62rem;font-weight:700;color:var(--lav-mid);text-align:center;padding:.28rem 0;letter-spacing:.05em;text-transform:uppercase;}
+.cal-day{aspect-ratio:1;border-radius:8px;font-size:.75rem;font-weight:500;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .15s;border:1px solid transparent;color:var(--lav);}
+.cal-day:hover:not(.cal-day-disabled):not(.cal-day-unavail):not(.cal-day-past){background:rgba(155,126,200,.18);border-color:var(--lav-deep);}
+.cal-day-past{color:rgba(200,184,232,.25);cursor:not-allowed;}
+.cal-day-disabled{background:transparent;cursor:not-allowed;}
+.cal-day-unavail{background:rgba(232,80,80,.08);border-color:rgba(232,80,80,.2);color:rgba(232,140,140,.5);cursor:not-allowed;text-decoration:line-through;text-decoration-color:rgba(232,80,80,.4);}
+.cal-day-selected{background:linear-gradient(135deg,var(--purple),var(--rose-dk))!important;border-color:transparent!important;color:#fff!important;box-shadow:0 2px 10px rgba(107,79,160,.4);}
+.cal-day-today{border-color:var(--lav-mid);}
+
+.cal-legend{display:flex;gap:.9rem;margin-top:.75rem;flex-wrap:wrap;}
+.cl-item{display:flex;align-items:center;gap:.3rem;font-size:.65rem;color:var(--lav-mid);}
+.cl-dot{width:10px;height:10px;border-radius:3px;}
+.cal-loading{text-align:center;padding:1.5rem;color:var(--lav-mid);font-size:.8rem;}
+.selected-date-display{background:rgba(107,79,160,.18);border:1px solid rgba(155,126,200,.35);border-radius:9px;padding:.5rem .85rem;font-size:.82rem;color:var(--lav);margin-top:.5rem;display:flex;align-items:center;gap:.4rem;}
+
+/* FLEXIBLE DATE CALENDAR */
+
+
+/* SEAT SELECTOR */
+.seat-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:.28rem;margin-top:.42rem;}
+.seat{aspect-ratio:1;border-radius:5px;cursor:pointer;border:1px solid rgba(200,184,232,.26);background:rgba(200,184,232,.05);font-size:.48rem;color:var(--lav-mid);display:flex;align-items:center;justify-content:center;transition:all .12s;font-weight:600;}
+.seat:hover{background:rgba(155,126,200,.17);border-color:var(--lav-deep);}
+.seat.sel{background:linear-gradient(135deg,var(--purple),var(--rose-dk));border-color:transparent;color:#fff;}
+.seat.taken{background:rgba(200,184,232,.03);border-color:rgba(200,184,232,.08);color:rgba(200,184,232,.16);cursor:not-allowed;}
+.seat.aisle{border:none;background:transparent;cursor:default;}
+.seat-leg{display:flex;gap:.85rem;margin-top:.42rem;}
+.sl-i{display:flex;align-items:center;gap:.28rem;font-size:.64rem;color:var(--lav-mid);}
+.sl-d{width:9px;height:9px;border-radius:3px;}
+
+/* PRICE SUMMARY */
+.price-sum{background:rgba(232,111,160,.07);border:1px solid rgba(232,111,160,.16);border-radius:12px;padding:.9rem 1.05rem;margin:1.05rem 0;}
+.prow{display:flex;justify-content:space-between;font-size:.8rem;color:var(--lav-mid);margin-bottom:.32rem;}
+.prow.total{color:var(--rose);font-weight:700;font-size:1.02rem;border-top:1px solid rgba(200,184,232,.16);padding-top:.42rem;margin-top:.42rem;}
+
+.submit-btn{width:100%;padding:.82rem;background:linear-gradient(135deg,#8B5CF6,#EC4899);border:none;border-radius:12px;color:#fff;font-family:'DM Sans',sans-serif;font-size:.92rem;font-weight:700;cursor:pointer;letter-spacing:.05em;transition:all .2s;box-shadow:0 4px 18px rgba(139,92,246,.28);}
+.submit-btn:hover{transform:translateY(-1px);box-shadow:0 8px 26px rgba(139,92,246,.4);}
+.submit-btn:disabled{opacity:.5;cursor:not-allowed;transform:none;}
+
+/* SUCCESS */
+.success{text-align:center;padding:.7rem 0;}
+.sicon{font-size:3.5rem;margin-bottom:.8rem;display:block;animation:bounceIn .5s ease;}
+@keyframes bounceIn{0%{transform:scale(0)}60%{transform:scale(1.1)}100%{transform:scale(1)}}
+.stitle{font-family:'Cormorant Garamond',serif;font-size:1.85rem;color:var(--lav);margin-bottom:.35rem;}
+.ssub{color:var(--lav-mid);margin-bottom:1.2rem;font-size:.85rem;}
+.bref-box{background:rgba(200,184,232,.07);border:1px solid var(--gb);border-radius:10px;padding:.85rem;font-family:'Cormorant Garamond',serif;font-size:1.85rem;font-weight:700;color:var(--rose);letter-spacing:.15em;margin-bottom:.85rem;}
+.bref-box small{display:block;font-size:.7rem;color:var(--lav-mid);font-family:'DM Sans',sans-serif;font-weight:400;letter-spacing:0;}
+.confirm-details{background:rgba(200,184,232,.06);border:1px solid var(--gb);border-radius:10px;padding:.8rem 1rem;font-size:.8rem;color:var(--lav-mid);margin-bottom:1.2rem;text-align:left;line-height:1.8;}
+.confirm-details strong{color:var(--lav);}
+
+/* BOOKINGS PAGE */
+.pg-wrap{max-width:900px;margin:0 auto;padding:2rem;}
+.pg-hdr h2{font-family:'Cormorant Garamond',serif;font-size:2rem;color:var(--lav);margin-bottom:.28rem;}
+.pg-hdr p{color:var(--lav-mid);font-size:.88rem;margin-bottom:1.6rem;}
+.phone-form{display:flex;gap:.65rem;margin-bottom:1.8rem;flex-wrap:wrap;}
+.bk-item{background:rgba(200,184,232,.07);border:1px solid var(--gb);border-radius:14px;padding:1.05rem 1.2rem;margin-bottom:.85rem;display:flex;align-items:center;gap:1.2rem;flex-wrap:wrap;}
+.bk-ref{font-family:'Cormorant Garamond',serif;font-size:1.3rem;font-weight:700;color:var(--rose);min-width:88px;}
+.bk-info{flex:1;}
+.bk-route{font-size:1.02rem;color:var(--lav);font-weight:500;}
+.bk-det{font-size:.74rem;color:var(--lav-mid);margin-top:.2rem;}
+.bk-price{font-family:'Cormorant Garamond',serif;font-size:1.45rem;color:var(--rose);font-weight:700;}
+.badge{font-size:.64rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:.2rem .58rem;border-radius:6px;}
+.badge-ok{background:rgba(80,200,120,.12);color:#50C878;border:1px solid rgba(80,200,120,.26);}
+.session-note{background:rgba(155,126,200,.1);border:1px solid rgba(155,126,200,.25);border-radius:10px;padding:.75rem 1rem;font-size:.78rem;color:var(--lav-mid);margin-bottom:1.2rem;display:flex;align-items:center;gap:.5rem;}
+.flight-date-badge{display:inline-flex;align-items:center;gap:.3rem;background:rgba(107,79,160,.2);border:1px solid rgba(155,126,200,.3);border-radius:6px;padding:.15rem .5rem;font-size:.7rem;color:var(--lav-mid);margin-top:.2rem;}
+
+/* ADMIN */
+.admin-login-wrap{display:flex;align-items:center;justify-content:center;min-height:calc(100vh - 64px);padding:2rem;}
+.admin-login-card{background:linear-gradient(145deg,rgba(200,184,232,.1),rgba(230,230,250,.04));border:1px solid var(--gb);border-radius:22px;padding:2.4rem;width:100%;max-width:390px;text-align:center;backdrop-filter:blur(10px);}
+.login-icon{font-size:2.6rem;margin-bottom:.9rem;display:block;}
+.login-title{font-family:'Cormorant Garamond',serif;font-size:1.95rem;color:var(--lav);margin-bottom:.28rem;}
+.login-sub{color:var(--lav-mid);font-size:.82rem;margin-bottom:1.6rem;}
+.login-err{background:rgba(232,80,80,.1);border:1px solid rgba(232,80,80,.22);border-radius:8px;padding:.55rem .85rem;color:#F08080;font-size:.78rem;margin-bottom:.9rem;text-align:left;}
+.demo-creds{margin-top:1.1rem;font-size:.7rem;color:var(--lav-mid);background:rgba(200,184,232,.07);border:1px solid var(--gb);border-radius:8px;padding:.6rem .85rem;text-align:left;}
+.admin-wrap{max-width:980px;margin:0 auto;padding:2rem;}
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:.9rem;margin-bottom:1.8rem;}
+.stat-card{background:rgba(200,184,232,.08);border:1px solid var(--gb);border-radius:12px;padding:1.1rem;text-align:center;}
+.stat-val{font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:700;color:var(--rose);}
+.stat-lbl{font-size:.68rem;color:var(--lav-mid);font-weight:500;letter-spacing:.05em;text-transform:uppercase;}
+.admin-grid{display:grid;grid-template-columns:1fr 1.4fr;gap:1.8rem;align-items:start;}
+.aform-card{background:rgba(200,184,232,.07);border:1px solid var(--gb);border-radius:18px;padding:1.35rem;}
+.aform-title{font-size:.92rem;font-weight:600;color:var(--lav);margin-bottom:1rem;}
+.admin-list{display:flex;flex-direction:column;gap:.65rem;}
+.admin-item{background:rgba(200,184,232,.05);border:1px solid var(--gb);border-radius:12px;padding:.9rem 1.05rem;display:flex;align-items:center;gap:.85rem;}
+.ai-route{flex:1;}
+.ai-route strong{color:var(--lav);font-size:.88rem;}
+.ai-route small{display:block;color:var(--lav-mid);font-size:.7rem;}
+.ai-price{font-family:'Cormorant Garamond',serif;font-size:1.3rem;font-weight:700;color:var(--rose);}
+.ai-exp{font-size:.68rem;color:var(--rose-dk);}
+.ai-actions{display:flex;gap:.38rem;}
+.ibtn{background:rgba(200,184,232,.09);border:1px solid var(--gb);border-radius:7px;color:var(--lav-mid);cursor:pointer;padding:.32rem .56rem;font-size:.74rem;transition:all .12s;}
+.ibtn:hover{background:rgba(200,184,232,.17);color:var(--lav);}
+.ibtn.del:hover{background:rgba(232,80,80,.12);color:#E85050;border-color:rgba(232,80,80,.26);}
+.ab-table{width:100%;border-collapse:collapse;margin-top:.5rem;}
+.ab-table th{font-size:.7rem;color:var(--lav-mid);font-weight:600;letter-spacing:.05em;text-transform:uppercase;text-align:left;padding:.6rem .8rem;border-bottom:1px solid var(--gb);}
+.ab-table td{font-size:.8rem;color:var(--lav);padding:.7rem .8rem;border-bottom:1px solid rgba(200,184,232,.1);}
+.ab-table tr:last-child td{border-bottom:none;}
+
+/* ── NEW FEATURE STYLES ─────────────────────────────────────── */
+
+/* FEATURE TABS */
+.feature-tabs{display:flex;gap:.4rem;flex-wrap:wrap;margin:1.2rem 0;}
+.ftab{background:rgba(200,184,232,.07);border:1px solid var(--gb);border-radius:20px;padding:.38rem .9rem;color:var(--lav-mid);font-size:.76rem;cursor:pointer;transition:all .15s;font-weight:500;display:flex;align-items:center;gap:.35rem;}
+.ftab:hover,.ftab.on{background:linear-gradient(135deg,rgba(107,79,160,.4),rgba(200,120,152,.3));border-color:var(--lav-deep);color:var(--lav);}
+
+/* FLIGHT STATUS */
+.status-card{background:rgba(200,184,232,.07);border:1px solid var(--gb);border-radius:16px;padding:1.2rem;margin-top:1rem;}
+.status-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;flex-wrap:wrap;gap:.5rem;}
+.status-badge{padding:.32rem .85rem;border-radius:20px;font-size:.75rem;font-weight:700;letter-spacing:.05em;}
+.status-ontime{background:rgba(80,200,120,.15);color:var(--green);border:1px solid rgba(80,200,120,.3);}
+.status-delayed{background:rgba(232,180,80,.15);color:#E8B450;border:1px solid rgba(232,180,80,.3);}
+.status-boarding{background:rgba(80,160,232,.15);color:#50A0E8;border:1px solid rgba(80,160,232,.3);}
+.status-cancelled{background:rgba(232,80,80,.15);color:#E85050;border:1px solid rgba(232,80,80,.3);}
+.status-departed,.status-arrived{background:rgba(155,126,200,.15);color:var(--lav-deep);border:1px solid rgba(155,126,200,.3);}
+.status-grid{display:grid;grid-template-columns:1fr 1fr;gap:.8rem;}
+.s-item{background:rgba(200,184,232,.05);border:1px solid rgba(200,184,232,.15);border-radius:10px;padding:.7rem .9rem;}
+.s-label{font-size:.65rem;color:var(--lav-mid);text-transform:uppercase;letter-spacing:.05em;margin-bottom:.2rem;}
+.s-val{font-size:.88rem;color:var(--lav);font-weight:500;}
+
+/* WEATHER */
+.weather-card{background:rgba(200,184,232,.07);border:1px solid var(--gb);border-radius:16px;padding:1.2rem;margin-top:1rem;}
+.weather-main{display:flex;align-items:center;gap:1.5rem;margin-bottom:1rem;}
+.weather-icon{font-size:3rem;}
+.weather-temp{font-family:'Cormorant Garamond',serif;font-size:3rem;font-weight:300;color:var(--lav);}
+.weather-cond{font-size:.88rem;color:var(--lav-mid);}
+.weather-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:.6rem;margin-bottom:1rem;}
+.w-stat{background:rgba(200,184,232,.06);border:1px solid rgba(200,184,232,.15);border-radius:9px;padding:.6rem;text-align:center;}
+.w-stat-val{font-size:.88rem;font-weight:600;color:var(--lav);}
+.w-stat-lbl{font-size:.62rem;color:var(--lav-mid);text-transform:uppercase;letter-spacing:.04em;}
+.forecast-row{display:flex;gap:.5rem;overflow-x:auto;padding-bottom:.4rem;}
+.forecast-day{background:rgba(200,184,232,.05);border:1px solid rgba(200,184,232,.12);border-radius:9px;padding:.6rem .5rem;text-align:center;flex-shrink:0;min-width:62px;}
+.fc-date{font-size:.6rem;color:var(--lav-mid);}
+.fc-icon{font-size:1.1rem;margin:.2rem 0;}
+.fc-temp{font-size:.72rem;color:var(--lav);}
+
+/* NEARBY AIRPORTS */
+.nearby-card{background:rgba(200,184,232,.07);border:1px solid var(--gb);border-radius:16px;padding:1.2rem;margin-top:1rem;}
+.airport-alt{background:rgba(200,184,232,.05);border:1px solid rgba(200,184,232,.15);border-radius:10px;padding:.8rem 1rem;margin-bottom:.6rem;display:flex;align-items:center;gap:.9rem;cursor:pointer;transition:all .15s;}
+.airport-alt:hover{border-color:var(--lav-deep);background:rgba(155,126,200,.1);}
+.alt-code{font-family:'Cormorant Garamond',serif;font-size:1.4rem;font-weight:700;color:var(--rose);min-width:50px;}
+.alt-info{flex:1;}
+.alt-name{font-size:.83rem;color:var(--lav);font-weight:500;}
+.alt-city{font-size:.7rem;color:var(--lav-mid);}
+.alt-saving{text-align:right;}
+.alt-save-label{font-size:.62rem;color:var(--green);text-transform:uppercase;letter-spacing:.04em;}
+.alt-save-val{font-size:.82rem;color:var(--green);font-weight:600;}
+.alt-dist{font-size:.65rem;color:var(--lav-mid);}
+
+/* CARBON */
+.carbon-card{background:rgba(200,184,232,.07);border:1px solid var(--gb);border-radius:16px;padding:1.2rem;margin-top:1rem;}
+.carbon-main{display:flex;align-items:center;gap:1.5rem;margin-bottom:1rem;flex-wrap:wrap;}
+.carbon-num{font-family:'Cormorant Garamond',serif;font-size:2.8rem;font-weight:300;color:var(--lav);}
+.carbon-unit{font-size:.75rem;color:var(--lav-mid);}
+.carbon-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:.6rem;margin-bottom:1rem;}
+.carbon-bar{background:rgba(80,200,120,.1);border:1px solid rgba(80,200,120,.2);border-radius:8px;padding:.4rem .8rem;text-align:center;}
+.carbon-bar-val{font-size:.88rem;font-weight:600;color:var(--green);}
+.carbon-bar-lbl{font-size:.6rem;color:var(--lav-mid);}
+.offset-btn{background:linear-gradient(135deg,rgba(80,200,120,.2),rgba(46,158,88,.15));border:1px solid rgba(80,200,120,.3);border-radius:10px;color:var(--green);padding:.7rem 1rem;font-size:.82rem;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .15s;width:100%;}
+.offset-btn:hover{background:linear-gradient(135deg,rgba(80,200,120,.3),rgba(46,158,88,.25));box-shadow:0 4px 12px rgba(80,200,120,.2);}
+
+/* FOOD OPTIONS */
+.food-card{background:rgba(200,184,232,.07);border:1px solid var(--gb);border-radius:16px;padding:1.2rem;margin-top:1rem;}
+.food-item{background:rgba(200,184,232,.05);border:1px solid rgba(200,184,232,.13);border-radius:10px;padding:.75rem 1rem;margin-bottom:.5rem;display:flex;align-items:center;gap:.85rem;}
+.food-icon{font-size:1.5rem;flex-shrink:0;}
+.food-name{font-size:.84rem;color:var(--lav);font-weight:500;}
+.food-type{font-size:.65rem;color:var(--lav-mid);}
+.food-price{margin-left:auto;text-align:right;flex-shrink:0;}
+.food-price-val{font-size:.85rem;font-weight:700;color:var(--rose);}
+.food-included{font-size:.68rem;color:var(--green);font-weight:600;}
+
+/* MULTI-CITY */
+.multicity-wrap{max-width:900px;margin:0 auto;padding:2rem;}
+.mc-leg{background:rgba(200,184,232,.07);border:1px solid var(--gb);border-radius:14px;padding:1.1rem;margin-bottom:.8rem;position:relative;}
+.mc-leg-num{position:absolute;top:-.55rem;left:1rem;background:linear-gradient(135deg,var(--purple),var(--rose-dk));color:#fff;font-size:.65rem;font-weight:700;padding:.2rem .55rem;border-radius:8px;letter-spacing:.04em;}
+.mc-result{background:rgba(200,184,232,.07);border:1px solid var(--gb);border-radius:14px;padding:1.2rem;margin-top:1rem;}
+.mc-leg-result{display:flex;align-items:center;justify-content:space-between;padding:.6rem 0;border-bottom:1px solid rgba(200,184,232,.1);}
+.mc-leg-result:last-child{border-bottom:none;}
+.mc-route{font-size:.88rem;color:var(--lav);}
+.mc-price{font-family:'Cormorant Garamond',serif;font-size:1.1rem;color:var(--rose);}
+
+/* CHATBOT */
+.chatbot-panel{position:fixed;bottom:1.5rem;right:1.5rem;z-index:300;width:360px;background:linear-gradient(145deg,#2D1B4E,#1E0F38);border:1px solid var(--gb);border-radius:20px;box-shadow:0 20px 60px rgba(18,6,36,.6);overflow:hidden;animation:slideUp .3s ease;}
+.chatbot-header{background:linear-gradient(135deg,var(--purple),var(--rose-dk));padding:.9rem 1.1rem;display:flex;align-items:center;justify-content:space-between;}
+.chatbot-title{color:#fff;font-weight:600;font-size:.9rem;display:flex;align-items:center;gap:.4rem;}
+.chatbot-close{background:transparent;border:none;color:rgba(255,255,255,.7);cursor:pointer;font-size:1.1rem;}
+.chatbot-messages{height:280px;overflow-y:auto;padding:.9rem;display:flex;flex-direction:column;gap:.6rem;}
+.chat-msg{padding:.6rem .85rem;border-radius:14px;font-size:.79rem;line-height:1.5;max-width:85%;}
+.chat-msg.bot{background:rgba(200,184,232,.1);border:1px solid rgba(200,184,232,.15);color:var(--lav);align-self:flex-start;border-radius:14px 14px 14px 4px;}
+.chat-msg.user{background:linear-gradient(135deg,var(--purple),var(--rose-dk));color:#fff;align-self:flex-end;border-radius:14px 14px 4px 14px;}
+.chat-quick{display:flex;flex-wrap:wrap;gap:.35rem;padding:.6rem .9rem;}
+.chat-quick-btn{background:rgba(200,184,232,.08);border:1px solid rgba(200,184,232,.2);border-radius:20px;color:var(--lav-mid);font-size:.68rem;cursor:pointer;padding:.28rem .65rem;transition:all .12s;font-family:'DM Sans',sans-serif;}
+.chat-quick-btn:hover{background:rgba(155,126,200,.2);color:var(--lav);}
+.chat-input-row{display:flex;gap:.4rem;padding:.7rem .9rem;border-top:1px solid var(--gb);}
+.chat-input{flex:1;background:rgba(200,184,232,.07);border:1px solid var(--gb);border-radius:22px;padding:.48rem .9rem;color:var(--lav);font-family:'DM Sans',sans-serif;font-size:.8rem;outline:none;}
+.chat-send{background:linear-gradient(135deg,var(--purple),var(--rose-dk));border:none;border-radius:50%;width:32px;height:32px;color:#fff;cursor:pointer;font-size:.85rem;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+
+.chatbot-fab{position:fixed;bottom:1.5rem;right:1.5rem;z-index:299;background:linear-gradient(135deg,var(--purple),var(--rose-dk));border:none;border-radius:50%;width:56px;height:56px;color:#fff;cursor:pointer;font-size:1.4rem;box-shadow:0 8px 24px rgba(107,79,160,.5);transition:all .2s;}
+.chatbot-fab:hover{transform:scale(1.08);box-shadow:0 12px 32px rgba(107,79,160,.6);}
+
+/* TERMINAL MAP */
+.terminal-card{background:rgba(200,184,232,.07);border:1px solid var(--gb);border-radius:16px;padding:1.2rem;margin-top:1rem;}
+.terminal-block{background:rgba(200,184,232,.05);border:1px solid rgba(200,184,232,.15);border-radius:12px;padding:.9rem 1rem;margin-bottom:.8rem;}
+.terminal-name{font-size:.84rem;color:var(--lav);font-weight:600;margin-bottom:.5rem;}
+.terminal-gates{font-size:.73rem;color:var(--lav-mid);margin-bottom:.4rem;}
+.amenity-tags{display:flex;flex-wrap:wrap;gap:.3rem;}
+.amenity-tag{background:rgba(155,126,200,.12);border:1px solid rgba(155,126,200,.2);border-radius:6px;padding:.15rem .48rem;font-size:.62rem;color:var(--lav-mid);}
+
+/* UTILS */
+.empty{text-align:center;padding:3rem 2rem;color:var(--lav-mid);}
+.empty .eicon{font-size:2.6rem;margin-bottom:.85rem;}
+.toast{position:fixed;bottom:1.8rem;right:1.8rem;z-index:500;background:linear-gradient(135deg,var(--purple),var(--rose-dk));color:#fff;padding:.8rem 1.35rem;border-radius:12px;font-weight:500;font-size:.86rem;box-shadow:0 8px 24px rgba(107,79,160,.36);animation:slideR .3s ease;}
+@keyframes slideR{from{transform:translateX(80px);opacity:0}to{transform:translateX(0);opacity:1}}
+.loading{text-align:center;padding:3rem;color:var(--lav-mid);font-size:.9rem;}
+.spin{display:inline-block;animation:spin 1s linear infinite;font-size:1.5rem;margin-bottom:.5rem;}
+@keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+.api-err{background:rgba(232,80,80,.1);border:1px solid rgba(232,80,80,.22);border-radius:10px;padding:.8rem 1rem;color:#F08080;font-size:.82rem;margin:.5rem 0;}
+.info-box{background:rgba(155,126,200,.08);border:1px solid rgba(155,126,200,.2);border-radius:10px;padding:.75rem 1rem;font-size:.79rem;color:var(--lav-mid);margin:.6rem 0;}
+.sec-hdr{font-family:'Cormorant Garamond',serif;font-size:1.25rem;color:var(--lav);margin-bottom:.7rem;}
+
+@media(max-width:660px){
+  .admin-grid{grid-template-columns:1fr;}
+  .frow{grid-template-columns:1fr;}
+  .stats-row{grid-template-columns:1fr 1fr;}
+  .nav-tab{padding:.38rem .52rem;font-size:.68rem;}
+  .chatbot-panel{width:calc(100vw - 2rem);right:1rem;}
+}
+
+/* ── NEW FEATURES CSS ── */
+.promo-row{display:flex;gap:.5rem;margin-bottom:.55rem;}
+.promo-input{flex:1;padding:.62rem .85rem;background:rgba(200,184,232,.07);border:1px solid var(--gb);border-radius:10px;color:var(--lav);font-family:'DM Sans',sans-serif;font-size:.83rem;outline:none;text-transform:uppercase;letter-spacing:.05em;}
+.promo-success{background:rgba(80,200,120,.1);border:1px solid rgba(80,200,120,.25);border-radius:9px;padding:.48rem .82rem;font-size:.77rem;color:var(--green);display:flex;align-items:center;gap:.38rem;margin-bottom:.5rem;}
+.promo-error{background:rgba(232,80,80,.1);border:1px solid rgba(232,80,80,.22);border-radius:9px;padding:.48rem .82rem;font-size:.77rem;color:#F08080;margin-bottom:.5rem;}
+.stars{display:flex;gap:.13rem;}
+.star{font-size:.88rem;}.star.on{color:#FFD700;}.star.off{color:rgba(200,184,232,.22);}
+.review-card{background:rgba(200,184,232,.06);border:1px solid rgba(200,184,232,.15);border-radius:12px;padding:.82rem .95rem;margin-bottom:.55rem;}
+.review-name{font-size:.79rem;font-weight:600;color:var(--lav);}
+.review-date{font-size:.63rem;color:var(--lav-mid);}
+.review-comment{font-size:.76rem;color:var(--lav-mid);margin-top:.28rem;line-height:1.5;}
+.guide-card{background:rgba(200,184,232,.07);border:1px solid var(--gb);border-radius:16px;padding:1.15rem;margin-top:.85rem;}
+.guide-header{display:flex;align-items:center;gap:.85rem;margin-bottom:.9rem;}
+.guide-emoji{font-size:2.6rem;}
+.guide-title{font-family:'Cormorant Garamond',serif;font-size:1.45rem;color:var(--lav);font-weight:600;}
+.guide-tagline{font-size:.76rem;color:var(--lav-mid);}
+.guide-grid{display:grid;grid-template-columns:1fr 1fr;gap:.75rem;margin-bottom:.85rem;}
+.guide-section{background:rgba(200,184,232,.05);border:1px solid rgba(200,184,232,.13);border-radius:10px;padding:.72rem .88rem;}
+.guide-section-title{font-size:.66rem;font-weight:700;color:var(--rose);text-transform:uppercase;letter-spacing:.05em;margin-bottom:.42rem;}
+.guide-list{list-style:none;}.guide-list li{font-size:.75rem;color:var(--lav-mid);padding:.15rem 0;}.guide-list li::before{content:'· ';color:var(--rose);}
+.guide-meta{display:flex;gap:.55rem;flex-wrap:wrap;margin-bottom:.72rem;}
+.guide-pill{background:rgba(155,126,200,.12);border:1px solid rgba(155,126,200,.2);border-radius:20px;padding:.2rem .68rem;font-size:.68rem;color:var(--lav-mid);}
+.holiday-card{background:rgba(200,184,232,.06);border:1px solid rgba(200,184,232,.15);border-radius:12px;padding:.82rem .95rem;margin-bottom:.55rem;display:flex;gap:.9rem;align-items:flex-start;}
+.holiday-date-box{background:linear-gradient(135deg,var(--purple),var(--rose-dk));border-radius:10px;padding:.45rem .6rem;text-align:center;flex-shrink:0;min-width:52px;}
+.holiday-day{font-family:'Cormorant Garamond',serif;font-size:1.45rem;font-weight:700;color:#fff;line-height:1;}
+.holiday-mon{font-size:.58rem;color:rgba(255,255,255,.8);letter-spacing:.05em;text-transform:uppercase;}
+.holiday-name{font-size:.84rem;font-weight:600;color:var(--lav);}
+.holiday-tip{font-size:.7rem;color:var(--lav-mid);margin-top:.18rem;}
+.currency-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(135px,1fr));gap:.55rem;margin-top:.75rem;}
+.currency-item{background:rgba(200,184,232,.06);border:1px solid rgba(200,184,232,.15);border-radius:10px;padding:.65rem;text-align:center;}
+.currency-code{font-size:.92rem;font-weight:700;color:var(--rose);}
+.currency-rate{font-size:.72rem;color:var(--lav-mid);}
+.currency-example{font-size:.68rem;color:var(--lav);margin-top:.18rem;}
+.visa-card{background:rgba(200,184,232,.07);border:1px solid var(--gb);border-radius:16px;padding:1.15rem;margin-top:.85rem;}
+.visa-type-badge{display:inline-flex;align-items:center;gap:.28rem;padding:.28rem .82rem;border-radius:20px;font-size:.74rem;font-weight:600;margin-bottom:.85rem;}
+.visa-free{background:rgba(80,200,120,.15);color:var(--green);border:1px solid rgba(80,200,120,.3);}
+.visa-required{background:rgba(232,180,80,.1);color:#E8B450;border:1px solid rgba(232,180,80,.3);}
+.visa-on-arrival{background:rgba(80,160,232,.1);color:#50A0E8;border:1px solid rgba(80,160,232,.3);}
+.visa-grid{display:grid;grid-template-columns:1fr 1fr;gap:.6rem;}
+.visa-item{background:rgba(200,184,232,.05);border:1px solid rgba(200,184,232,.14);border-radius:9px;padding:.58rem .78rem;}
+.surprise-wrap{text-align:center;padding:2rem 2rem;}
+.surprise-btn{background:linear-gradient(135deg,var(--purple),var(--pink));border:none;border-radius:20px;color:#fff;font-family:'DM Sans',sans-serif;font-size:.96rem;font-weight:600;padding:.88rem 2rem;cursor:pointer;transition:all .2s;box-shadow:0 8px 24px rgba(107,79,160,.4);}
+.surprise-btn:hover{transform:translateY(-2px);box-shadow:0 12px 32px rgba(107,79,160,.5);}
+.baggage-item{background:rgba(200,184,232,.05);border:1px solid rgba(200,184,232,.15);border-radius:10px;padding:.68rem .88rem;margin-bottom:.42rem;display:flex;align-items:center;justify-content:space-between;cursor:pointer;transition:all .15s;}
+.baggage-item:hover,.baggage-item.sel{border-color:var(--green);background:rgba(80,200,120,.06);}
+.insurance-item{background:rgba(200,184,232,.05);border:1px solid rgba(200,184,232,.15);border-radius:10px;padding:.72rem .88rem;margin-bottom:.45rem;cursor:pointer;transition:all .15s;}
+.insurance-item:hover,.insurance-item.sel{border-color:var(--purple);background:rgba(107,79,160,.08);}
+.analytics-chart{display:flex;align-items:flex-end;gap:.32rem;height:95px;margin-top:.75rem;padding-bottom:.45rem;border-bottom:1px solid rgba(200,184,232,.15);}
+.chart-bar{flex:1;background:linear-gradient(0deg,var(--purple),var(--rose-dk));border-radius:4px 4px 0 0;min-height:4px;cursor:pointer;}
+.chart-label{font-size:.52rem;color:var(--lav-mid);text-align:center;margin-top:.28rem;}
+.qr-box{background:rgba(200,184,232,.06);border:1px solid var(--gb);border-radius:12px;padding:.95rem;margin:.75rem 0;display:flex;align-items:center;gap:.95rem;}
+.qr-code{width:68px;height:68px;display:grid;grid-template-columns:repeat(7,1fr);gap:1px;flex-shrink:0;}
+.qr-cell{border-radius:1px;}
+.recent-chip{background:rgba(200,184,232,.07);border:1px solid var(--gb);border-radius:20px;padding:.28rem .82rem;font-size:.72rem;color:var(--lav-mid);cursor:pointer;display:inline-flex;align-items:center;gap:.28rem;transition:all .15s;margin:.18rem;}
+.recent-chip:hover{background:rgba(155,126,200,.15);color:var(--lav);border-color:var(--lav-deep);}
+.waitlist-modal-body{padding:.2rem 0;}
+.compare-table{width:100%;border-collapse:collapse;margin-top:.5rem;}
+.compare-table th{font-size:.63rem;color:var(--lav-mid);font-weight:600;text-transform:uppercase;letter-spacing:.04em;padding:.5rem .6rem;border-bottom:1px solid var(--gb);text-align:left;}
+.compare-table td{font-size:.79rem;color:var(--lav);padding:.62rem .6rem;border-bottom:1px solid rgba(200,184,232,.08);}
+.compare-table tr:last-child td{border-bottom:none;}
+.compare-table td.best{color:var(--green);font-weight:700;}
+.prow.green{color:var(--green);}
+@media(max-width:660px){.guide-grid{grid-template-columns:1fr;}.visa-grid{grid-template-columns:1fr;}}
+
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const { useState, useEffect, useCallback, useRef } = React;
+
+/* ── API HELPER ── */
+async function api(method, path, body) {
+  const opts = { method, credentials:'include', headers:{'Content-Type':'application/json'} };
+  if (body) opts.body = JSON.stringify(body);
+  const res  = await fetch('/api' + path, opts);
+  const json = await res.json();
+  if (!res.ok) throw new Error(json.error || 'Request failed');
+  return json;
+}
+
+/* ── TIMER ── */
+function useTimer(secondsLeft) {
+  const [rem, setRem] = useState(secondsLeft);
+  useEffect(() => {
+    if (rem <= 0) return;
+    const t = setInterval(() => setRem(r => Math.max(0, r - 1)), 1000);
+    return () => clearInterval(t);
+  }, []);
+  const h = Math.floor(rem/3600), m = Math.floor((rem%3600)/60), s = rem%60;
+  return { rem, label:`${h>0?h+'h ':''}${m}m ${s}s` };
+}
+
+/* ── DATE HELPERS ── */
+function toYMD(d) {
+  return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+}
+function formatDisplay(ymd) {
+  if (!ymd) return '';
+  const [y,m,d] = ymd.split('-');
+  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  return `${d} ${months[Number(m)-1]} ${y}`;
+}
+function formatTime(iso) {
+  if (!iso) return '';
+  const d = new Date(iso);
+  return d.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit',hour12:true});
+}
+function weatherIcon(cond) {
+  const map = {'Sunny':'☀️','Partly Cloudy':'⛅','Cloudy':'☁️','Light Rain':'🌦','Heavy Rain':'🌧','Thunderstorm':'⛈','Clear':'🌙','Hazy':'🌫'};
+  return map[cond] || '🌤';
+}
+
+/* ── CALENDAR ── */
+function FlightCalendar({ unavailableDates, loading, selected, onSelect }) {
+  const today = new Date(); today.setHours(0,0,0,0);
+  const maxDate = new Date(today); maxDate.setMonth(maxDate.getMonth()+3);
+  const [viewYear, setViewYear] = useState(today.getFullYear());
+  const [viewMonth, setViewMonth] = useState(today.getMonth());
+  const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  const DAYS   = ['Su','Mo','Tu','We','Th','Fr','Sa'];
+  const firstDay    = new Date(viewYear, viewMonth, 1).getDay();
+  const daysInMonth = new Date(viewYear, viewMonth+1, 0).getDate();
+  const todayYMD = toYMD(today), maxYMD = toYMD(maxDate);
+  const minNav = today.getMonth() + today.getFullYear()*12;
+  const maxNav = maxDate.getMonth() + maxDate.getFullYear()*12;
+  const curNav = viewMonth + viewYear*12;
+  function prevMonth() { if(curNav<=minNav)return; viewMonth===0?[setViewMonth(11),setViewYear(y=>y-1)]:setViewMonth(m=>m-1); }
+  function nextMonth() { if(curNav>=maxNav)return; viewMonth===11?[setViewMonth(0),setViewYear(y=>y+1)]:setViewMonth(m=>m+1); }
+  const cells = [];
+  for(let i=0;i<firstDay;i++) cells.push(null);
+  for(let d=1;d<=daysInMonth;d++) cells.push(d);
+  return (
+    <div className="cal-wrap">
+      <div className="cal-nav">
+        <button className="cal-nav-btn" onClick={prevMonth} disabled={curNav<=minNav}>◀</button>
+        <div className="cal-month">{MONTHS[viewMonth]} {viewYear}</div>
+        <button className="cal-nav-btn" onClick={nextMonth} disabled={curNav>=maxNav}>▶</button>
+      </div>
+      {loading ? <div className="cal-loading">⏳ Loading dates…</div> : (
+        <>
+          <div className="cal-grid">
+            {DAYS.map(d => <div key={d} className="cal-dow">{d}</div>)}
+            {cells.map((day, idx) => {
+              if (!day) return <div key={'e'+idx} className="cal-day cal-day-disabled"/>;
+              const ymd = `${viewYear}-${String(viewMonth+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
+              const isPast=ymd<todayYMD, isBeyond=ymd>maxYMD, isUnavail=unavailableDates.includes(ymd);
+              const isSel=ymd===selected, isToday=ymd===todayYMD;
+              let cls='cal-day';
+              if(isSel) cls+=' cal-day-selected';
+              else if(isPast||isBeyond) cls+=' cal-day-past';
+              else if(isUnavail) cls+=' cal-day-unavail';
+              else if(isToday) cls+=' cal-day-today';
+              return (
+                <div key={ymd} className={cls}
+                  onClick={()=>!isPast&&!isBeyond&&!isUnavail&&onSelect(isSel?'':ymd)}
+                  title={isUnavail?'Unavailable':''}>
+                  {day}
+                </div>
+              );
+            })}
+          </div>
+          <div className="cal-legend">
+            <div className="cl-item"><div className="cl-dot" style={{background:'linear-gradient(135deg,#6B4FA0,#C87898)'}}/><span>Selected</span></div>
+            <div className="cl-item"><div className="cl-dot" style={{background:'rgba(232,80,80,.15)',border:'1px solid rgba(232,80,80,.3)'}}/><span>Unavailable</span></div>
+          </div>
+          {selected && <div className="selected-date-display">✈ Flight date: <strong style={{color:'var(--rose)'}}>{formatDisplay(selected)}</strong></div>}
+        </>
+      )}
+    </div>
+  );
+}
+
+/* ── SEAT SELECTOR ── */
+function SeatSelector({ dealId, taken, selected, onSelect }) {
+  const rows = [1,2,3,4,5,6], cols = ['A','B','C',null,'D','E','F'];
+  return (
+    <div>
+      <div className="seat-grid">
+        {rows.map(r => cols.map((c,ci) => {
+          if (!c) return <div key={`${r}-aisle`} className="seat aisle"/>;
+          const id=`${r}${c}`, isTaken=taken.includes(id), isSel=selected===id;
+          return <div key={id} className={`seat${isTaken?' taken':''}${isSel?' sel':''}`}
+            onClick={()=>!isTaken&&onSelect(isSel?null:id)}>{r}{c}</div>;
+        }))}
+      </div>
+      <div className="seat-leg">
+        <div className="sl-i"><div className="sl-d" style={{background:'rgba(200,184,232,.06)',border:'1px solid rgba(200,184,232,.26)'}}/><span>Available</span></div>
+        <div className="sl-i"><div className="sl-d" style={{background:'linear-gradient(135deg,#6B4FA0,#C87898)'}}/><span>Selected</span></div>
+        <div className="sl-i"><div className="sl-d" style={{background:'rgba(200,184,232,.03)',border:'1px solid rgba(200,184,232,.08)'}}/><span>Taken</span></div>
+      </div>
+    </div>
+  );
+}
+
+/* ── WEATHER PANEL ── */
+function WeatherPanel({ city }) {
+  const [data, setData] = useState(null);
+  const [input, setInput] = useState(city || '');
+  const [loading, setLoading] = useState(false);
+  function load(c) {
+    if (!c) return;
+    setLoading(true);
+    api('GET', `/weather?city=${encodeURIComponent(c)}`)
+      .then(r => { setData(r.data); setLoading(false); })
+      .catch(() => setLoading(false));
+  }
+  useEffect(() => { if (city) load(city); }, [city]);
+  const cities = ['Mumbai','Delhi','Bangalore','Chennai','Kolkata','Hyderabad','Goa','Pune','Ahmedabad','Jaipur'];
+  return (
+    <div>
+      <div className="sec-hdr">🌤 Destination Weather</div>
+      <div style={{display:'flex',gap:'.5rem',marginBottom:'.6rem',flexWrap:'wrap'}}>
+        <input className="finput" style={{maxWidth:220}} placeholder="Enter city…" value={input} onChange={e=>setInput(e.target.value)} onKeyDown={e=>e.key==='Enter'&&load(input)}/>
+        <button className="submit-btn" style={{width:'auto',padding:'.65rem 1.1rem'}} onClick={()=>load(input)}>Check →</button>
+      </div>
+      <div style={{display:'flex',gap:'.35rem',flexWrap:'wrap',marginBottom:'.8rem'}}>
+        {cities.map(c=><div key={c} className={`chip${input===c?' on':''}`} onClick={()=>{setInput(c);load(c);}}>{c}</div>)}
+      </div>
+      {loading && <div className="cal-loading">⏳ Fetching weather…</div>}
+      {data && (
+        <div className="weather-card">
+          <div className="weather-main">
+            <div className="weather-icon">{weatherIcon(data.condition)}</div>
+            <div>
+              <div className="weather-temp">{data.temperature}°C</div>
+              <div className="weather-cond">{data.condition} · {data.city}</div>
+            </div>
+          </div>
+          <div className="weather-stats">
+            <div className="w-stat"><div className="w-stat-val">{data.humidity}%</div><div className="w-stat-lbl">Humidity</div></div>
+            <div className="w-stat"><div className="w-stat-val">{data.windSpeed} km/h</div><div className="w-stat-lbl">Wind</div></div>
+            <div className="w-stat"><div className="w-stat-val">{data.feelsLike}°C</div><div className="w-stat-lbl">Feels Like</div></div>
+          </div>
+          <div style={{fontSize:'.75rem',color:'var(--lav-mid)',marginBottom:'.5rem'}}>5-Day Forecast</div>
+          <div className="forecast-row">
+            {data.forecast.map(f=>(
+              <div key={f.date} className="forecast-day">
+                <div className="fc-date">{formatDisplay(f.date).slice(0,6)}</div>
+                <div className="fc-icon">{weatherIcon(f.condition)}</div>
+                <div className="fc-temp">{f.high}° / {f.low}°</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* ── FLIGHT STATUS PANEL ── */
+function FlightStatusPanel() {
+  const [from, setFrom] = useState('BOM');
+  const [to, setTo]     = useState('DEL');
+  const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const airports = ['BOM','DEL','BLR','CCU','MAA','HYD','GOI','PNQ','AMD'];
+  function load() {
+    setLoading(true);
+    api('GET', `/flights/status?from=${from}&to=${to}`)
+      .then(r => { setData(r.data); setLoading(false); })
+      .catch(() => setLoading(false));
+  }
+  useEffect(() => { load(); }, []);
+  const statusClass = s => ({
+    'On Time':'status-ontime','Delayed':'status-delayed','Boarding':'status-boarding',
+    'Cancelled':'status-cancelled','Departed':'status-departed','Arrived':'status-arrived'
+  }[s]||'status-ontime');
+  return (
+    <div>
+      <div className="sec-hdr">🛫 Live Flight Status</div>
+      <div style={{display:'flex',gap:'.5rem',alignItems:'flex-end',flexWrap:'wrap',marginBottom:'.6rem'}}>
+        <div className="fsec" style={{marginBottom:0}}>
+          <label>From</label>
+          <select className="finput" value={from} onChange={e=>setFrom(e.target.value)}>{airports.map(a=><option key={a}>{a}</option>)}</select>
+        </div>
+        <div className="fsec" style={{marginBottom:0}}>
+          <label>To</label>
+          <select className="finput" value={to} onChange={e=>setTo(e.target.value)}>{airports.map(a=><option key={a}>{a}</option>)}</select>
+        </div>
+        <button className="submit-btn" style={{width:'auto',padding:'.67rem 1.1rem',marginBottom:0}} onClick={load}>Check Status →</button>
+      </div>
+      {loading && <div className="cal-loading">⏳ Fetching status…</div>}
+      {data && (
+        <div className="status-card">
+          <div className="status-header">
+            <div>
+              <div style={{fontSize:'1rem',fontWeight:600,color:'var(--lav)'}}>{data.flight}</div>
+              <div style={{fontSize:'.75rem',color:'var(--lav-mid)'}}>{data.from} → {data.to}</div>
+            </div>
+            <span className={`status-badge ${statusClass(data.status)}`}>{data.status}</span>
+          </div>
+          {data.delayMinutes>0 && <div className="api-err" style={{marginBottom:'.8rem'}}>⚠ Delayed by {data.delayMinutes} minutes</div>}
+          <div className="status-grid">
+            <div className="s-item"><div className="s-label">Terminal</div><div className="s-val">{data.terminal}</div></div>
+            <div className="s-item"><div className="s-label">Gate</div><div className="s-val">{data.gate}</div></div>
+            <div className="s-item"><div className="s-label">Departure</div><div className="s-val">{formatTime(data.departure)}</div></div>
+            <div className="s-item"><div className="s-label">Arrival</div><div className="s-val">{formatTime(data.arrival)}</div></div>
+          </div>
+          <div style={{fontSize:'.65rem',color:'var(--lav-mid)',marginTop:'.7rem',textAlign:'right'}}>Last updated: {formatTime(data.updatedAt)}</div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* ── NEARBY AIRPORTS ── */
+function NearbyAirportsPanel() {
+  const [city, setCity] = useState('');
+  const [data, setData] = useState(null);
+  const cities = ['Mumbai','Delhi','Bangalore','Chennai','Kolkata','Hyderabad'];
+  function load(c) {
+    if (!c) return;
+    api('GET', `/airports/nearby?city=${encodeURIComponent(c)}`).then(r=>setData(r.data)).catch(()=>{});
+  }
+  return (
+    <div>
+      <div className="sec-hdr">🗺 Nearby Airport Suggestions</div>
+      <div className="info-box">💡 Flying from a nearby city can save you thousands of rupees!</div>
+      <div style={{display:'flex',gap:'.35rem',flexWrap:'wrap',marginBottom:'1rem'}}>
+        {cities.map(c=><div key={c} className={`chip${city===c?' on':''}`} onClick={()=>{setCity(c);load(c);}}>{c}</div>)}
+      </div>
+      {data && (
+        <div className="nearby-card">
+          <div style={{fontSize:'.8rem',color:'var(--lav-mid)',marginBottom:.8+'rem'}}>Alternatives near <strong style={{color:'var(--lav)'}}>{data.city}</strong></div>
+          {data.alternatives.length===0 && <div style={{color:'var(--lav-mid)',fontSize:'.8rem'}}>No alternatives found for this city.</div>}
+          {data.alternatives.map(a=>(
+            <div key={a.code} className="airport-alt">
+              <div className="alt-code">{a.code}</div>
+              <div className="alt-info">
+                <div className="alt-name">{a.name}</div>
+                <div className="alt-city">{a.city} · {a.distance} away</div>
+              </div>
+              <div className="alt-saving">
+                <div className="alt-save-label">Potential saving</div>
+                <div className="alt-save-val">{a.saving}</div>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* ── CARBON CALCULATOR ── */
+function CarbonCalculator() {
+  const [from, setFrom] = useState('BOM');
+  const [to, setTo]     = useState('DEL');
+  const [pax, setPax]   = useState('1');
+  const [cls, setCls]   = useState('Economy');
+  const [data, setData] = useState(null);
+  const [offsetDone, setOffsetDone] = useState(false);
+  const airports = ['BOM','DEL','BLR','CCU','MAA','HYD','GOI','PNQ','AMD'];
+  function calc() {
+    api('GET', `/carbon?from=${from}&to=${to}&passengers=${pax}&seatClass=${encodeURIComponent(cls)}`)
+      .then(r=>setData(r.data)).catch(()=>{});
+  }
+  useEffect(()=>calc(),[]);
+  return (
+    <div>
+      <div className="sec-hdr">🌱 Carbon Footprint Calculator</div>
+      <div className="info-box">✈ Aviation accounts for about 2.5% of global CO₂ emissions. Know your impact.</div>
+      <div className="frow" style={{marginBottom:'.8rem'}}>
+        <div className="fsec" style={{marginBottom:0}}><label>From</label>
+          <select className="finput" value={from} onChange={e=>setFrom(e.target.value)}>{airports.map(a=><option key={a}>{a}</option>)}</select>
+        </div>
+        <div className="fsec" style={{marginBottom:0}}><label>To</label>
+          <select className="finput" value={to} onChange={e=>setTo(e.target.value)}>{airports.map(a=><option key={a}>{a}</option>)}</select>
+        </div>
+      </div>
+      <div className="frow" style={{marginBottom:'.8rem'}}>
+        <div className="fsec" style={{marginBottom:0}}><label>Passengers</label>
+          <select className="finput" value={pax} onChange={e=>setPax(e.target.value)}>
+            {[1,2,3,4,5].map(n=><option key={n} value={n}>{n}</option>)}
+          </select>
+        </div>
+        <div className="fsec" style={{marginBottom:0}}><label>Class</label>
+          <select className="finput" value={cls} onChange={e=>setCls(e.target.value)}>
+            <option>Economy</option><option>Premium Economy</option><option>Business</option>
+          </select>
+        </div>
+      </div>
+      <button className="submit-btn" style={{marginBottom:'1rem'}} onClick={calc}>Calculate →</button>
+      {data && (
+        <div className="carbon-card">
+          <div className="carbon-main">
+            <div>
+              <div style={{fontSize:'.72rem',color:'var(--lav-mid)',textTransform:'uppercase',letterSpacing:'.05em'}}>Total CO₂ emitted</div>
+              <div style={{display:'flex',alignItems:'baseline',gap:'.3rem'}}>
+                <div className="carbon-num">{data.totalCo2}</div>
+                <div className="carbon-unit">kg CO₂</div>
+              </div>
+              <div style={{fontSize:'.73rem',color:'var(--lav-mid)'}}>({data.co2PerPassenger} kg per passenger · {data.distance} km route)</div>
+            </div>
+          </div>
+          <div className="carbon-stats">
+            <div className="carbon-bar"><div className="carbon-bar-val">🌳 {data.treesNeeded}</div><div className="carbon-bar-lbl">Trees needed (1 yr)</div></div>
+            <div className="carbon-bar"><div className="carbon-bar-val">🚗 {data.carEquivalentKm} km</div><div className="carbon-bar-lbl">Car equivalent</div></div>
+            <div className="carbon-bar"><div className="carbon-bar-val">₹{data.offsetCost}</div><div className="carbon-bar-lbl">Offset cost</div></div>
+          </div>
+          <button className="offset-btn" onClick={()=>setOffsetDone(true)} disabled={offsetDone}>
+            {offsetDone ? '✅ Thank you for offsetting your carbon!' : `🌱 Offset for ₹${data.offsetCost} →`}
+          </button>
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* ── FOOD OPTIONS ── */
+function FoodPanel({ airline, seatClass }) {
+  const [sel, setSel]   = useState({ airline: airline||'IndiGo', cls: seatClass||'Economy' });
+  const [data, setData] = useState(null);
+  const airlines = ['IndiGo','Air India','SpiceJet','Vistara'];
+  const classes  = ['Economy','Premium Economy','Business'];
+  function load(a, c) {
+    api('GET', `/flights/food?airline=${a}&seatClass=${encodeURIComponent(c)}`)
+      .then(r=>setData(r.data)).catch(()=>{});
+  }
+  useEffect(()=>load(sel.airline, sel.cls),[]);
+  return (
+    <div>
+      <div className="sec-hdr">🍽 In-Flight Food Options</div>
+      <div className="info-box">Browse the menu available on your flight. Meals can be pre-ordered directly with the airline at least 24 hours before departure.</div>
+      <div className="frow" style={{marginBottom:'.9rem'}}>
+        <div className="fsec" style={{marginBottom:0}}><label>Airline</label>
+          <select className="finput" value={sel.airline} onChange={e=>{setSel(s=>({...s,airline:e.target.value}));load(e.target.value,sel.cls);}}>
+            {airlines.map(a=><option key={a}>{a}</option>)}
+          </select>
+        </div>
+        <div className="fsec" style={{marginBottom:0}}><label>Class</label>
+          <select className="finput" value={sel.cls} onChange={e=>{setSel(s=>({...s,cls:e.target.value}));load(sel.airline,e.target.value);}}>
+            {classes.map(c=><option key={c}>{c}</option>)}
+          </select>
+        </div>
+      </div>
+      {data && (
+        <div className="food-card">
+          <div style={{fontSize:'.75rem',color:'var(--lav-mid)',marginBottom:'.8rem'}}>{data.airline} · {data.seatClass} — Menu</div>
+          {data.items.map(item=>(
+            <div key={item.name} className="food-item">
+              <div className="food-icon">{item.icon}</div>
+              <div><div className="food-name">{item.name}</div><div className="food-type">{item.type}</div></div>
+              <div className="food-price">
+                {item.included ? <div className="food-included">✓ Included</div> : <div className="food-price-val">₹{item.price}</div>}
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* ── AIRPORT TERMINAL ── */
+function TerminalPanel() {
+  const [code, setCode] = useState('BOM');
+  const [data, setData] = useState(null);
+  const airports = [
+    {code:'BOM',name:'Mumbai'},{code:'DEL',name:'Delhi'},
+    {code:'BLR',name:'Bangalore'},{code:'CCU',name:'Kolkata'}
+  ];
+  function load(c) {
+    api('GET', `/airports/terminal?code=${c}`).then(r=>setData(r.data)).catch(()=>{});
+  }
+  useEffect(()=>load(code),[]);
+  return (
+    <div>
+      <div className="sec-hdr">🗺 Airport Navigation</div>
+      <div style={{display:'flex',gap:'.35rem',flexWrap:'wrap',marginBottom:'1rem'}}>
+        {airports.map(a=>(
+          <div key={a.code} className={`chip${code===a.code?' on':''}`} onClick={()=>{setCode(a.code);load(a.code);}}>
+            {a.code} – {a.name}
+          </div>
+        ))}
+      </div>
+      {data && (
+        <div className="terminal-card">
+          <div style={{fontSize:'.88rem',fontWeight:600,color:'var(--lav)',marginBottom:'.9rem'}}>{data.name}</div>
+          {data.terminals.filter(t=>t.gates.length>0).map(t=>(
+            <div key={t.id} className="terminal-block">
+              <div className="terminal-name">✈ {t.name}</div>
+              <div className="terminal-gates">Gates: {t.gates.join(' · ')}</div>
+              <div className="amenity-tags">
+                {t.amenities.map(a=><span key={a} className="amenity-tag">{a}</span>)}
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* ── MULTI-CITY ── */
+function MultiCityPage() {
+  const airports = ['BOM','DEL','BLR','CCU','MAA','HYD','GOI','PNQ','AMD'];
+  const [legs, setLegs] = useState([{from:'BOM',to:'DEL'},{from:'DEL',to:'BLR'}]);
+  const [result, setResult] = useState(null);
+  const [loading, setLoading] = useState(false);
+  function addLeg() { setLegs(l=>[...l,{from:'BLR',to:'CCU'}]); }
+  function removeLeg(i) { setLegs(l=>l.filter((_,j)=>j!==i)); }
+  function setLeg(i,k,v) { setLegs(l=>l.map((leg,j)=>j===i?{...leg,[k]:v}:leg)); }
+  function search() {
+    setLoading(true);
+    const legStr = legs.map(l=>`${l.from}-${l.to}`).join(',');
+    api('GET', `/multicity/fare?legs=${legStr}`)
+      .then(r=>{ setResult(r.data); setLoading(false); })
+      .catch(()=>setLoading(false));
+  }
+  return (
+    <div className="page">
+      <div className="multicity-wrap">
+        <div className="pg-hdr"><h2>Multi-City Trip Planner</h2><p>Plan trips with multiple destinations and save with our multi-city discount</p></div>
+        {legs.map((leg,i)=>(
+          <div key={i} className="mc-leg">
+            <div className="mc-leg-num">LEG {i+1}</div>
+            <div className="frow" style={{paddingTop:'.4rem'}}>
+              <div className="fsec" style={{marginBottom:0}}><label>From</label>
+                <select className="finput" value={leg.from} onChange={e=>setLeg(i,'from',e.target.value)}>
+                  {airports.map(a=><option key={a}>{a}</option>)}
+                </select>
+              </div>
+              <div className="fsec" style={{marginBottom:0}}><label>To</label>
+                <select className="finput" value={leg.to} onChange={e=>setLeg(i,'to',e.target.value)}>
+                  {airports.map(a=><option key={a}>{a}</option>)}
+                </select>
+              </div>
+            </div>
+            {i>1&&<button className="ibtn del" style={{marginTop:'.5rem'}} onClick={()=>removeLeg(i)}>Remove Leg</button>}
+          </div>
+        ))}
+        <div style={{display:'flex',gap:'.5rem',marginBottom:'1.2rem'}}>
+          {legs.length<5&&<button className="ibtn" onClick={addLeg}>+ Add Destination</button>}
+          <button className="submit-btn" style={{flex:1}} disabled={loading} onClick={search}>{loading?'⏳ Searching…':'Search Multi-City →'}</button>
+        </div>
+        {result && (
+          <div className="mc-result">
+            <div className="sec-hdr">✈ Trip Summary</div>
+            {result.legs.map(l=>(
+              <div key={l.leg} className="mc-leg-result">
+                <div>
+                  <div className="mc-route"><strong>Leg {l.leg}:</strong> {l.from} → {l.to}</div>
+                  <div style={{fontSize:'.72rem',color:'var(--lav-mid)'}}>{l.airline} · {l.duration}</div>
+                </div>
+                <div className="mc-price">₹{l.price.toLocaleString()}</div>
+              </div>
+            ))}
+            <div style={{marginTop:'1rem',paddingTop:'.8rem',borderTop:'1px solid var(--gb)'}}>
+              <div className="prow"><span>Subtotal</span><span>₹{result.subtotal.toLocaleString()}</span></div>
+              <div className="prow" style={{color:'var(--green)'}}><span>🎉 Multi-city discount (7%)</span><span>−₹{result.multiCityDiscount.toLocaleString()}</span></div>
+              <div className="prow total"><span>Total</span><span>₹{result.total.toLocaleString()}</span></div>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+/* ── CHATBOT ── */
+const CHATBOT_KNOWLEDGE = {
+  'baggage': 'For domestic flights: Economy allows 15kg check-in + 7kg cabin. Business gets 35kg check-in. Excess baggage is charged at ₹500–800/kg.',
+  'checkin': 'Online check-in opens 48 hours before departure and closes 2 hours before. Airport check-in closes 45 mins before departure.',
+  'cancel': 'Cancellation charges: 0–24h before flight: 100% fee. 24–48h: 50% fee. 48h+ before: ₹2000–3500 flat fee depending on airline.',
+  'refund': 'Refunds are processed in 7–10 business days for credit/debit cards, and 5–7 days for UPI/net banking.',
+  'seat': 'Seat selection is free at check-in (subject to availability). Premium seats (extra legroom, exit row) cost ₹500–2000 extra.',
+  'meal': 'Use our 🍽 Food Options tab to pre-book meals. Meals must be ordered at least 24 hours before departure.',
+  'delay': 'For delays over 2 hours: you\'re entitled to free meals at the airport. Delays over 24 hours entitle you to a hotel stay. Check our Live Status tab.',
+  'visa': 'For domestic travel, you need a government-issued photo ID (Aadhaar, PAN, passport, or voter ID).',
+  'infant': 'Infants under 2 travel at 10% of adult fare. They don\'t get a separate seat and must sit on a guardian\'s lap.',
+  'pet': 'Pets are allowed as checked baggage on select airlines. Contact the airline at least 48 hours in advance.',
+  'carbon': 'Use our 🌱 Carbon Calculator tab to check and offset your flight\'s environmental impact.',
+  'booking': 'You can book with just your phone number — no account needed! Enter your number on the deals page.',
+};
+
+function Chatbot({ onClose }) {
+  const [msgs, setMsgs] = useState([
+    { role:'bot', text:'✈ Hi! I\'m your BookMyFlight assistant. Ask me about baggage, check-in, cancellations, meals, or any booking query!' }
+  ]);
+  const [input, setInput] = useState('');
+  const [typing, setTyping] = useState(false);
+  const endRef = useRef(null);
+  const quickReplies = ['Baggage policy','Check-in time','Cancel/Refund','Seat selection','Meal options'];
+
+  useEffect(()=>{ endRef.current?.scrollIntoView({behavior:'smooth'}); },[msgs]);
+
+  function getBotReply(text) {
+    const t = text.toLowerCase();
+    for (const [key, val] of Object.entries(CHATBOT_KNOWLEDGE)) {
+      if (t.includes(key)) return val;
+    }
+    if (t.includes('hello')||t.includes('hi')||t.includes('hey')) return '👋 Hello! How can I help you with your flight booking today?';
+    if (t.includes('thank')) return 'You\'re welcome! Have a wonderful flight! ✈';
+    if (t.includes('price')||t.includes('fare')||t.includes('cost')) return 'Check our Deals tab for the latest fares across all routes!';
+    if (t.includes('weather')) return 'Check our Weather tab to see the forecast for your destination city!';
+    if (t.includes('status')) return 'Use the Flight Status tab (in Services) to check live departure/arrival status!';
+    return 'I\'m not sure about that specific query. Please contact our support at support@bookmyflight.com or call 1800-123-4567. I can help with: baggage, check-in, cancellations, meals, seat selection!';
+  }
+
+  function send(text) {
+    const msg = text || input;
+    if (!msg.trim()) return;
+    setMsgs(m=>[...m,{role:'user',text:msg}]);
+    setInput('');
+    setTyping(true);
+    setTimeout(()=>{
+      setMsgs(m=>[...m,{role:'bot',text:getBotReply(msg)}]);
+      setTyping(false);
+    }, 600 + Math.random()*400);
+  }
+
+  return (
+    <div className="chatbot-panel">
+      <div className="chatbot-header">
+        <div className="chatbot-title">🤖 Travel Assistant</div>
+        <button className="chatbot-close" onClick={onClose}>✕</button>
+      </div>
+      <div className="chatbot-messages">
+        {msgs.map((m,i)=><div key={i} className={`chat-msg ${m.role}`}>{m.text}</div>)}
+        {typing && <div className="chat-msg bot" style={{opacity:.6}}>✍ Typing…</div>}
+        <div ref={endRef}/>
+      </div>
+      <div className="chat-quick">
+        {quickReplies.map(q=><button key={q} className="chat-quick-btn" onClick={()=>send(q)}>{q}</button>)}
+      </div>
+      <div className="chat-input-row">
+        <input className="chat-input" placeholder="Ask anything…" value={input} onChange={e=>setInput(e.target.value)} onKeyDown={e=>e.key==='Enter'&&send()}/>
+        <button className="chat-send" onClick={()=>send()}>➤</button>
+      </div>
+    </div>
+  );
+}
+
+/* ── DEAL CARD ── */
+function DealCard({ deal, onBook }) {
+  const { rem, label } = useTimer(deal.secondsLeft);
+  const expired = rem === 0;
+  return (
+    <div className={`deal-card${expired?' expired':''}${deal.featured?' featured':''}`} onClick={()=>!expired&&onBook(deal)}>
+      <div className="dbadge">{deal.featured?'⭐ Hot Deal':'Special'}</div>
+      <div className="deal-route">
+        <div className="d-city">{deal.fromCode}<small>{deal.from}</small></div>
+        <div className="d-arrow">✈</div>
+        <div className="d-city">{deal.toCode}<small>{deal.to}</small></div>
+      </div>
+      <div className="deal-bottom">
+        <div className="d-price"><small>₹</small>{deal.price.toLocaleString()}</div>
+        <div className="d-meta">
+          <div className="d-airline">{deal.airline}</div>
+          <div className="d-class">{deal.seats} · {deal.duration}</div>
+        </div>
+      </div>
+      <div className="d-timer">⏱ {expired?'Deal expired':`Expires in ${label}`}</div>
+      <button className="book-btn" onClick={e=>{e.stopPropagation();!expired&&onBook(deal);}}>
+        {expired?'Deal Ended':'Book Now →'}
+      </button>
+    </div>
+  );
+}
+
+
+/* ── HELPER COMPONENTS ── */
+function Stars({rating}){return <div className="stars">{[1,2,3,4,5].map(i=><span key={i} className={"star "+(i<=Math.round(rating)?'on':'off')}>★</span>)}</div>;}
+
+function QRCode({value}){
+  const cells=[];
+  for(let i=0;i<49;i++){const v=(value.charCodeAt(i%value.length)*31+i*17+i*i*7)%100;cells.push(v>45);}
+  return <div className="qr-code">{cells.map((on,i)=><div key={i} className="qr-cell" style={{background:on?'var(--lav)':'transparent'}}/>)}</div>;
+}
+
+function useProfile(){
+  const[profile,setProfile]=useState(()=>{try{return JSON.parse(localStorage.getItem('bmf_profile')||'{}');}catch{return{};}});
+  function save(data){const p={...profile,...data};setProfile(p);try{localStorage.setItem('bmf_profile',JSON.stringify(p));}catch{}}
+  return[profile,save];
+}
+
+function useRecentSearches(){
+  const[searches,setSearches]=useState(()=>{try{return JSON.parse(localStorage.getItem('bmf_recent')||'[]');}catch{return[];}});
+  function add(q){if(!q)return;const n=[q,...searches.filter(s=>s!==q)].slice(0,5);setSearches(n);try{localStorage.setItem('bmf_recent',JSON.stringify(n));}catch{}}
+  return[searches,add];
+}
+
+/* ── PROMO CODE ── */
+function PromoBox({onApply,applied}){
+  const[code,setCode]=useState(''),[err,setErr]=useState('');
+  async function apply(){
+    if(!code.trim())return;
+    try{const r=await api('GET','/promos/validate?code='+code.trim());setErr('');onApply(r.data);}
+    catch(e){setErr(e.message);onApply(null);}
+  }
+  if(applied)return <div className="promo-success">🎉 <strong>{applied.code}</strong> — {applied.desc}</div>;
+  return(<div>
+    <div className="promo-row">
+      <input className="promo-input" placeholder="ENTER PROMO CODE" value={code} onChange={e=>setCode(e.target.value.toUpperCase())} onKeyDown={e=>e.key==='Enter'&&apply()}/>
+      <button className="ibtn" style={{padding:'.6rem 1rem',fontSize:'.8rem'}} onClick={apply}>Apply</button>
+    </div>
+    {err&&<div className="promo-error">✕ {err}</div>}
+    <div style={{fontSize:'.63rem',color:'var(--lav-mid)'}}>Try: SAVE10 · FLY20 · FIRST200 · WELCOME · BMF50</div>
+  </div>);
+}
+
+/* ── BAGGAGE SELECTOR ── */
+function BaggageSelector({selected,onSelect}){
+  const opts=[{id:'none',label:'No Extra Baggage',sub:'Cabin 7kg only',price:0},{id:'15kg',label:'15kg Check-in',sub:'+15kg hold baggage',price:599},{id:'20kg',label:'20kg Check-in',sub:'+20kg hold baggage',price:849},{id:'30kg',label:'30kg Check-in',sub:'+30kg hold baggage',price:1199}];
+  return <div>{opts.map(o=><div key={o.id} className={"baggage-item"+(selected===o.id?' sel':'')} onClick={()=>onSelect(o.id===selected?'none':o.id)}><div><div style={{fontSize:'.8rem',color:'var(--lav)',fontWeight:500}}>🧳 {o.label}</div><div style={{fontSize:'.68rem',color:'var(--lav-mid)'}}>{o.sub}</div></div><div style={{fontFamily:'Cormorant Garamond',fontSize:'1.05rem',fontWeight:700,color:o.price===0?'var(--green)':'var(--rose)'}}>{o.price===0?'Free':'+₹'+o.price}</div></div>)}</div>;
+}
+
+/* ── INSURANCE SELECTOR ── */
+function InsuranceSelector({selected,onSelect}){
+  const opts=[{id:'none',label:'No Insurance',desc:'Travel at own risk',price:0,icon:'❌'},{id:'basic',label:'Basic Cover',desc:'Trip cancellation up to ₹50,000',price:299,icon:'🛡'},{id:'standard',label:'Standard',desc:'Medical + cancellation + lost baggage',price:599,icon:'🛡🛡'},{id:'premium',label:'Premium',desc:'Full cover incl. adventure sports',price:999,icon:'🛡🛡🛡'}];
+  return <div>{opts.map(o=><div key={o.id} className={"insurance-item"+(selected===o.id?' sel':'')} onClick={()=>onSelect(o.id)}><div style={{display:'flex',justifyContent:'space-between',alignItems:'center'}}><div><div style={{fontSize:'.8rem',color:'var(--lav)',fontWeight:500}}>{o.icon} {o.label}</div><div style={{fontSize:'.68rem',color:'var(--lav-mid)',marginTop:'.12rem'}}>{o.desc}</div></div><div style={{fontFamily:'Cormorant Garamond',fontSize:'1.05rem',fontWeight:700,color:o.price===0?'var(--lav-mid)':'var(--rose)',flexShrink:0,marginLeft:'.5rem'}}>{o.price===0?'—':'+₹'+o.price}</div></div></div>)}</div>;
+}
+
+/* ── WAITLIST MODAL ── */
+function WaitlistModal({onClose,onToast}){
+  const airports=['BOM','DEL','BLR','CCU','MAA','HYD','GOI','PNQ','AMD'];
+  const[form,setForm]=useState({from:'BOM',to:'DEL',targetPrice:'3000',phone:''});
+  const[done,setDone]=useState(null);
+  async function submit(){
+    try{const r=await api('POST','/waitlist',form);setDone(r.data);onToast('Added to waitlist! 🔔');}
+    catch(e){onToast('Error: '+e.message);}
+  }
+  const set=(k,v)=>setForm(f=>({...f,[k]:v}));
+  return(<div className="overlay" onClick={onClose}><div className="modal" style={{maxWidth:420}} onClick={e=>e.stopPropagation()}>
+    <button className="modal-x" onClick={onClose}>✕</button>
+    <div className="modal-title">🔔 Price Alert</div>
+    <div className="modal-sub">Get notified when a fare drops to your target price</div>
+    {done?(<div className="success"><span className="sicon">🔔</span><div className="stitle">You're on the list!</div><div style={{background:'rgba(200,184,232,.07)',border:'1px solid var(--gb)',borderRadius:10,padding:'.8rem',marginBottom:'1rem',fontSize:'.8rem',color:'var(--lav-mid)',lineHeight:1.8}}><strong style={{color:'var(--lav)'}}>Ref: {done.ref}</strong><br/>Route: {done.from} → {done.to}<br/>Target: ₹{done.targetPrice}<br/>{done.message}</div><button className="submit-btn" onClick={onClose}>Done</button></div>):(<>
+      <div className="frow">
+        <div className="fsec"><label>From</label><select className="finput" value={form.from} onChange={e=>set('from',e.target.value)}>{airports.map(a=><option key={a}>{a}</option>)}</select></div>
+        <div className="fsec"><label>To</label><select className="finput" value={form.to} onChange={e=>set('to',e.target.value)}>{airports.map(a=><option key={a}>{a}</option>)}</select></div>
+      </div>
+      <div className="fsec"><label>Target Price (₹)</label><input className="finput" placeholder="e.g. 3000" value={form.targetPrice} onChange={e=>set('targetPrice',e.target.value)}/></div>
+      <div className="fsec"><label>Mobile Number</label><input className="finput" placeholder="10-digit mobile" value={form.phone} onChange={e=>set('phone',e.target.value.replace(/\D/g,'').slice(0,10))}/></div>
+      <button className="submit-btn" onClick={submit}>Set Alert →</button>
+    </>)}
+  </div></div>);
+}
+
+/* ── NEW SERVICE PANELS ── */
+function AirlineReviewsPanel(){
+  const[airline,setAirline]=useState('IndiGo'),[data,setData]=useState(null);
+  const airlines=['IndiGo','Air India','SpiceJet','Vistara'];
+  function load(a){api('GET','/airlines/reviews?airline='+a).then(r=>setData(r.data)).catch(()=>{});}
+  useEffect(()=>load(airline),[]);
+  return(<div>
+    <div className="sec-hdr">⭐ Airline Reviews & Ratings</div>
+    <div style={{display:'flex',gap:'.32rem',flexWrap:'wrap',marginBottom:'.85rem'}}>{airlines.map(a=><div key={a} className={"chip"+(airline===a?' on':'')} onClick={()=>{setAirline(a);load(a);}}>{a}</div>)}</div>
+    {data&&<>
+      <div style={{display:'flex',alignItems:'center',gap:'1.1rem',background:'rgba(200,184,232,.07)',border:'1px solid var(--gb)',borderRadius:14,padding:'1rem',marginBottom:'.85rem'}}>
+        <div style={{textAlign:'center'}}><div style={{fontFamily:'Cormorant Garamond',fontSize:'2.8rem',fontWeight:300,color:'var(--rose)',lineHeight:1}}>{data.avg}</div><Stars rating={data.avg}/><div style={{fontSize:'.66rem',color:'var(--lav-mid)',marginTop:'.18rem'}}>{data.total.toLocaleString()} reviews</div></div>
+        <div style={{flex:1}}>{[5,4,3,2,1].map(n=><div key={n} style={{display:'flex',alignItems:'center',gap:'.45rem',marginBottom:'.22rem'}}><span style={{fontSize:'.68rem',color:'var(--lav-mid)',width:8}}>{n}</span><div style={{flex:1,height:5,background:'rgba(200,184,232,.1)',borderRadius:3,overflow:'hidden'}}><div style={{height:'100%',width:data.breakdown[n]+'%',background:'linear-gradient(90deg,var(--purple),var(--rose-dk))',borderRadius:3}}/></div><span style={{fontSize:'.63rem',color:'var(--lav-mid)',width:22}}>{data.breakdown[n]}%</span></div>)}
+        </div>
+      </div>
+      {data.topReviews.map((r,i)=><div key={i} className="review-card"><div style={{display:'flex',justifyContent:'space-between',marginBottom:'.28rem'}}><div><div className="review-name">{r.name}</div><Stars rating={r.rating}/></div><div className="review-date">{r.date}</div></div><div className="review-comment">"{r.comment}"</div></div>)}
+    </>}
+  </div>);
+}
+
+function FlightComparePanel(){
+  const[from,setFrom]=useState('BOM'),[to,setTo]=useState('DEL'),[data,setData]=useState(null),[loading,setLoading]=useState(false);
+  const airports=['BOM','DEL','BLR','CCU','MAA','HYD','GOI'];
+  function load(){setLoading(true);api('GET','/flights/compare?from='+from+'&to='+to).then(r=>{setData(r.data);setLoading(false);}).catch(()=>setLoading(false));}
+  return(<div>
+    <div className="sec-hdr">🔍 Flight Comparison</div>
+    <div style={{display:'flex',gap:'.5rem',alignItems:'flex-end',flexWrap:'wrap',marginBottom:'.8rem'}}>
+      <div className="fsec" style={{marginBottom:0}}><label>From</label><select className="finput" value={from} onChange={e=>setFrom(e.target.value)}>{airports.map(a=><option key={a}>{a}</option>)}</select></div>
+      <div className="fsec" style={{marginBottom:0}}><label>To</label><select className="finput" value={to} onChange={e=>setTo(e.target.value)}>{airports.map(a=><option key={a}>{a}</option>)}</select></div>
+      <button className="submit-btn" style={{width:'auto',padding:'.63rem 1rem'}} onClick={load}>Compare →</button>
+    </div>
+    {loading&&<div className="loading"><div className="spin">🔍</div></div>}
+    {data&&<>
+      <table className="compare-table"><thead><tr><th>Airline</th><th>Price</th><th>Duration</th><th>Baggage</th><th>Meals</th><th>Stops</th><th>Rating</th></tr></thead>
+      <tbody>{(()=>{const minP=Math.min(...data.options.map(o=>o.price));return data.options.map((o,i)=><tr key={i}><td><div style={{fontWeight:600}}>{o.airline}</div><div style={{fontSize:'.65rem',color:'var(--lav-mid)'}}>{o.class}</div></td><td className={o.price===minP?'best':''}>{o.price===minP&&<span style={{fontSize:'.55rem',display:'block',color:'var(--green)'}}>BEST</span>}₹{o.price.toLocaleString()}</td><td>{o.duration}</td><td>{o.baggage}</td><td>{o.meals}</td><td>{o.stops}</td><td><Stars rating={o.rating}/></td></tr>);})()}</tbody>
+      </table>
+    </>}
+  </div>);
+}
+
+function HolidaysPanel(){
+  const[holidays,setHolidays]=useState([]);
+  useEffect(()=>{api('GET','/holidays').then(r=>setHolidays(r.data)).catch(()=>{});},[]);
+  const months=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  return(<div>
+    <div className="sec-hdr">🎉 Holiday & Long Weekend Finder</div>
+    <div className="info-box">Book early — fares spike significantly around public holidays!</div>
+    {holidays.map((h,i)=>{const d=new Date(h.date);return(<div key={i} className="holiday-card">
+      <div className="holiday-date-box"><div className="holiday-day">{d.getDate()}</div><div className="holiday-mon">{months[d.getMonth()]}</div></div>
+      <div><div className="holiday-name">{h.name} <span style={{fontSize:'.63rem',background:'rgba(200,184,232,.1)',border:'1px solid rgba(200,184,232,.2)',borderRadius:6,padding:'.08rem .38rem',color:'var(--lav-mid)'}}>{h.type}</span></div><div className="holiday-tip">💡 {h.tip}</div></div>
+    </div>);})}
+  </div>);
+}
+
+function DestinationGuidePanel(){
+  const[city,setCity]=useState('Goa'),[data,setData]=useState(null);
+  const cities=['Goa','Mumbai','Delhi','Bangalore','Jaipur','Kerala','Kolkata'];
+  function load(c){api('GET','/destinations/guide?city='+c).then(r=>setData(r.data)).catch(()=>{});}
+  useEffect(()=>load(city),[]);
+  return(<div>
+    <div className="sec-hdr">🌍 Destination Guides</div>
+    <div style={{display:'flex',gap:'.32rem',flexWrap:'wrap',marginBottom:'.8rem'}}>{cities.map(c=><div key={c} className={"chip"+(city===c?' on':'')} onClick={()=>{setCity(c);load(c);}}>{c}</div>)}</div>
+    {data&&<div className="guide-card">
+      <div className="guide-header"><div className="guide-emoji">{data.emoji}</div><div><div className="guide-title">{data.city}</div><div className="guide-tagline">{data.tagline}</div></div></div>
+      <div className="guide-meta"><div className="guide-pill">📅 Best time: {data.bestTime}</div><div className="guide-pill">💰 {data.budget}</div></div>
+      <div className="guide-grid">
+        <div className="guide-section"><div className="guide-section-title">🏛 Top Attractions</div><ul className="guide-list">{data.attractions.map(a=><li key={a}>{a}</li>)}</ul></div>
+        <div className="guide-section"><div className="guide-section-title">🍽 Must Try Food</div><ul className="guide-list">{data.cuisine.map(c=><li key={c}>{c}</li>)}</ul></div>
+      </div>
+      <div style={{background:'rgba(155,126,200,.08)',border:'1px solid rgba(155,126,200,.2)',borderRadius:10,padding:'.62rem .88rem',fontSize:'.75rem',color:'var(--lav-mid)'}}>💡 {data.tips}</div>
+    </div>}
+  </div>);
+}
+
+function CurrencyPanel(){
+  const currencies=[{code:'USD',flag:'🇺🇸',name:'US Dollar'},{code:'EUR',flag:'🇪🇺',name:'Euro'},{code:'GBP',flag:'🇬🇧',name:'Pound'},{code:'AED',flag:'🇦🇪',name:'UAE Dirham'},{code:'SGD',flag:'🇸🇬',name:'SGD'},{code:'THB',flag:'🇹🇭',name:'Thai Baht'},{code:'JPY',flag:'🇯🇵',name:'Japanese Yen'},{code:'AUD',flag:'🇦🇺',name:'AUD'},{code:'MYR',flag:'🇲🇾',name:'Ringgit'},{code:'CAD',flag:'🇨🇦',name:'CAD'}];
+  const[rates,setRates]=useState({}),[amount,setAmount]=useState('10000');
+  useEffect(()=>{Promise.all(currencies.map(c=>api('GET','/currency?to='+c.code).then(r=>({code:c.code,rate:r.data.rate})).catch(()=>null))).then(res=>{const r={};res.filter(Boolean).forEach(x=>r[x.code]=x.rate);setRates(r);});},[]);
+  return(<div>
+    <div className="sec-hdr">💱 Currency Converter</div>
+    <div className="info-box">Indicative rates — INR to foreign currencies</div>
+    <div style={{display:'flex',gap:'.5rem',marginBottom:'.85rem',alignItems:'center'}}>
+      <span style={{fontSize:'.83rem',color:'var(--lav-mid)',whiteSpace:'nowrap'}}>₹ INR</span>
+      <input className="finput" style={{maxWidth:170}} placeholder="10000" value={amount} onChange={e=>setAmount(e.target.value.replace(/\D/g,''))}/>
+    </div>
+    <div className="currency-grid">{currencies.map(c=><div key={c.code} className="currency-item"><div style={{fontSize:'1.3rem'}}>{c.flag}</div><div className="currency-code">{c.code}</div><div className="currency-rate">{c.name}</div><div className="currency-example">{rates[c.code]?(((rates[c.code])*(Number(amount)||10000)).toFixed(2)+' '+c.code):'…'}</div></div>)}</div>
+  </div>);
+}
+
+function VisaPanel(){
+  const[dest,setDest]=useState('Dubai'),[data,setData]=useState(null);
+  const destinations=['Dubai','Thailand','Singapore','Maldives','USA','UK','Nepal','Bhutan','Sri Lanka','Bali'];
+  function load(d){api('GET','/visa?destination='+encodeURIComponent(d)).then(r=>setData(r.data)).catch(()=>{});}
+  useEffect(()=>load(dest),[]);
+  function vClass(t){if(t.toLowerCase().includes('free'))return'visa-free';if(t.toLowerCase().includes('arrival'))return'visa-on-arrival';return'visa-required';}
+  return(<div>
+    <div className="sec-hdr">🛂 Visa Requirements for Indians</div>
+    <div style={{display:'flex',gap:'.32rem',flexWrap:'wrap',marginBottom:'.85rem'}}>{destinations.map(d=><div key={d} className={"chip"+(dest===d?' on':'')} onClick={()=>{setDest(d);load(d);}}>{d}</div>)}</div>
+    {data&&<div className="visa-card">
+      <div className={"visa-type-badge "+vClass(data.type)}>{data.required?'🔴':'🟢'} {data.type}</div>
+      <div className="visa-grid">
+        <div className="visa-item"><div className="s-label">Cost</div><div className="s-val">{data.cost}</div></div>
+        <div className="visa-item"><div className="s-label">Duration</div><div className="s-val">{data.duration}</div></div>
+        <div className="visa-item"><div className="s-label">Processing</div><div className="s-val">{data.processing}</div></div>
+        <div className="visa-item"><div className="s-label">Destination</div><div className="s-val">{data.destination}</div></div>
+      </div>
+      <div className="info-box" style={{marginTop:'.7rem'}}>📋 {data.notes}</div>
+    </div>}
+  </div>);
+}
+
+function SurprisePanel({onBook}){
+  const[pick,setPick]=useState(null),[loading,setLoading]=useState(false);
+  function surprise(){setLoading(true);api('GET','/deals/surprise').then(r=>{setPick(r.data);setLoading(false);}).catch(()=>setLoading(false));}
+  return(<div>
+    <div className="sec-hdr">🎲 Surprise Me!</div>
+    <div className="surprise-wrap">
+      <div style={{fontSize:'3rem',marginBottom:'1rem'}}>🎲</div>
+      <div style={{fontFamily:'Cormorant Garamond',fontSize:'1.45rem',color:'var(--lav)',marginBottom:'.45rem'}}>Let fate choose your next adventure</div>
+      <div style={{fontSize:'.83rem',color:'var(--lav-mid)',marginBottom:'1.3rem'}}>We'll pick a random cheap destination from today's live deals</div>
+      <button className="surprise-btn" onClick={surprise} disabled={loading}>{loading?'✨ Picking…':'🎲 Surprise Me!'}</button>
+      {pick&&<div style={{marginTop:'1.4rem',background:'rgba(200,184,232,.07)',border:'1px solid var(--gb)',borderRadius:16,padding:'1.15rem'}}>
+        <div style={{fontSize:'.68rem',color:'var(--rose)',letterSpacing:'.1em',textTransform:'uppercase',marginBottom:'.45rem'}}>✨ Your Destiny Awaits</div>
+        <div style={{fontFamily:'Cormorant Garamond',fontSize:'1.85rem',color:'var(--lav)',marginBottom:'.25rem'}}>{pick.from} → {pick.to}</div>
+        <div style={{fontSize:'.8rem',color:'var(--lav-mid)',marginBottom:'.85rem'}}>{pick.airline} · {pick.seats} · {pick.duration}</div>
+        <div style={{fontFamily:'Cormorant Garamond',fontSize:'2rem',color:'var(--rose)',marginBottom:'.85rem'}}>₹{pick.price.toLocaleString()}</div>
+        <button className="book-btn" onClick={()=>onBook(pick)}>Book This Adventure →</button>
+      </div>}
+    </div>
+  </div>);
+}
+
+function AnalyticsPanel(){
+  const[data,setData]=useState(null),[loading,setLoading]=useState(true);
+  useEffect(()=>{api('GET','/admin/analytics').then(r=>{setData(r.data);setLoading(false);}).catch(()=>setLoading(false));},[]);
+  if(loading)return <div className="loading"><div className="spin">📊</div><p>Loading analytics…</p></div>;
+  if(!data)return <div className="api-err">Could not load analytics</div>;
+  const maxR=data.chart.length?Math.max(...data.chart.map(d=>d.revenue),1):1;
+  return(<div>
+    <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'1rem',marginBottom:'1.1rem'}}>
+      <div className="stat-card"><div className="stat-val">₹{(data.totalRevenue/1000).toFixed(1)}K</div><div className="stat-lbl">Total Revenue</div></div>
+      <div className="stat-card"><div className="stat-val">{data.totalBookings}</div><div className="stat-lbl">Total Bookings</div></div>
+    </div>
+    <div style={{background:'rgba(200,184,232,.07)',border:'1px solid var(--gb)',borderRadius:14,padding:'1rem',marginBottom:'1rem'}}>
+      <div style={{fontSize:'.83rem',fontWeight:600,color:'var(--lav)',marginBottom:'.45rem'}}>📈 Revenue — Last 14 Days</div>
+      {data.chart.length===0?<div style={{color:'var(--lav-mid)',fontSize:'.78rem'}}>No data yet — create deals and bookings to see charts!</div>:<>
+        <div className="analytics-chart">{data.chart.map((d,i)=><div key={i} style={{flex:1,display:'flex',flexDirection:'column',alignItems:'center'}}><div className="chart-bar" style={{height:Math.max(4,(d.revenue/maxR)*88)+'px',width:'100%'}} title={'₹'+d.revenue}/><div className="chart-label">{d.date.slice(5)}</div></div>)}</div>
+      </>}
+    </div>
+    <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'1rem'}}>
+      <div style={{background:'rgba(200,184,232,.07)',border:'1px solid var(--gb)',borderRadius:14,padding:'1rem'}}>
+        <div style={{fontSize:'.8rem',fontWeight:600,color:'var(--lav)',marginBottom:'.65rem'}}>🔥 Popular Routes</div>
+        {data.popularRoutes.length===0?<div style={{color:'var(--lav-mid)',fontSize:'.76rem'}}>No data yet</div>:data.popularRoutes.map((r,i)=><div key={i} style={{display:'flex',justifyContent:'space-between',fontSize:'.76rem',color:'var(--lav-mid)',marginBottom:'.28rem'}}><span>{r.route}</span><span style={{color:'var(--rose)',fontWeight:600}}>{r.bookings} bkgs</span></div>)}
+      </div>
+      <div style={{background:'rgba(200,184,232,.07)',border:'1px solid var(--gb)',borderRadius:14,padding:'1rem'}}>
+        <div style={{fontSize:'.8rem',fontWeight:600,color:'var(--lav)',marginBottom:'.65rem'}}>📊 Deal Performance</div>
+        {data.dealPerformance.length===0?<div style={{color:'var(--lav-mid)',fontSize:'.76rem'}}>No data yet</div>:data.dealPerformance.slice(0,5).map((d,i)=><div key={i} style={{display:'flex',justifyContent:'space-between',fontSize:'.76rem',color:'var(--lav-mid)',marginBottom:'.28rem'}}><span>{d.route}</span><span style={{color:'var(--green)',fontWeight:600}}>{d.bookings} bkgs · ₹{(d.revenue/1000).toFixed(1)}K</span></div>)}
+      </div>
+    </div>
+  </div>);
+}
+
+/* ── BOOKING MODAL ── */
+function BookingModal({ deal, onClose, onConfirm }) {
+  const [step, setStep]     = useState(1);
+  const [taken, setTaken]   = useState([]);
+  const [unavDates, setUnavDates] = useState([]);
+  const [datesLoading, setDatesLoading] = useState(true);
+  const [form, setForm]     = useState({ name:'', phone:'', email:'', passengers:'1', seat:null, flightDate:'' });
+  const [errors, setErrors] = useState({});
+  const [loading, setLoading] = useState(false);
+  const [apiErr, setApiErr]   = useState('');
+  const [result, setResult]   = useState(null);
+  const [showFood, setShowFood] = useState(false);
+  const [showCarbon, setShowCarbon] = useState(false);
+  const [carbonData, setCarbonData] = useState(null);
+  const [foodData, setFoodData]   = useState(null);
+  const [foodCart, setFoodCart]   = useState([]);
+  const [promo, setPromo]         = useState(null);
+  const [baggage, setBaggage]     = useState('none');
+  const [insurance, setInsurance] = useState('none');
+  const [showBaggage, setShowBaggage]     = useState(false);
+  const [showInsurance, setShowInsurance] = useState(false);
+
+  function saveProfile(p){
+    try { localStorage.setItem('bmf_profile', JSON.stringify(p)); } catch {}
+  }
+
+  useEffect(() => {
+    api('GET', `/deals/${deal.id}/seats`).then(r=>setTaken(r.data.taken)).catch(()=>{});
+    setDatesLoading(true);
+    api('GET', `/deals/${deal.id}/unavailable-dates`).then(r=>{ setUnavDates(r.data.dates); setDatesLoading(false); }).catch(()=>setDatesLoading(false));
+    api('GET', `/carbon?from=${deal.fromCode}&to=${deal.toCode}&passengers=1&seatClass=${encodeURIComponent(deal.seats)}`)
+      .then(r=>setCarbonData(r.data)).catch(()=>{});
+    api('GET', `/flights/food?airline=${encodeURIComponent(deal.airline)}&seatClass=${encodeURIComponent(deal.seats)}`)
+      .then(r=>setFoodData(r.data)).catch(()=>{});
+  }, [deal.id]);
+
+  const taxes = Math.round(Number(form.passengers)*deal.price*.18);
+  const foodTotal = foodCart.filter(i=>!i.included).reduce((s,i)=>s+i.price,0);
+  const promoDiscount = promo ? (promo.type==='percent' ? Math.round(deal.price*Number(form.passengers)*promo.discount/100) : promo.discount) : 0;
+  const baggagePrices = {none:0,'15kg':599,'20kg':849,'30kg':1199};
+  const insurancePrices = {none:0,basic:299,standard:599,premium:999};
+  const baggageCost = baggagePrices[baggage]||0;
+  const insuranceCost = insurancePrices[insurance]||0;
+  const total = Number(form.passengers)*deal.price+taxes-promoDiscount+baggageCost+insuranceCost+foodTotal;
+
+  function validate() {
+    const e={};
+    if (!form.name.trim()) e.name='Name is required';
+    if (!/^[6-9]\d{9}$/.test(form.phone)) e.phone='Enter valid 10-digit mobile number';
+    if (form.email&&!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) e.email='Invalid email';
+    if (!form.flightDate) e.flightDate='Please select a flight date';
+    if (form.passengers==='1'&&!form.seat) e.seat='Please select a seat';
+    return e;
+  }
+
+  async function submit() {
+    const e=validate(); if(Object.keys(e).length){setErrors(e);return;}
+    setLoading(true); setApiErr('');
+    try {
+      const res = await api('POST','/bookings',{dealId:deal.id,name:form.name,phone:form.phone,email:form.email,passengers:Number(form.passengers),seat:form.seat,flightDate:form.flightDate});
+      saveProfile({name:form.name,phone:form.phone,email:form.email});
+      setResult(res.data); onConfirm(res.data.ref); setStep(2);
+    } catch(err){ setApiErr(err.message); } finally{ setLoading(false); }
+  }
+
+  const set=(k,v)=>setForm(f=>({...f,[k]:v}));
+  const clr=k=>setErrors(e=>({...e,[k]:undefined}));
+
+  if (step===2&&result) return (
+    <div className="overlay" onClick={onClose}>
+      <div className="modal" onClick={e=>e.stopPropagation()}>
+        <div className="success">
+          <span className="sicon">🎉</span>
+          <div className="stitle">Booking Confirmed!</div>
+          <div className="ssub">Your booking is saved. Safe travels!</div>
+          <div className="bref-box"><small>Booking Reference</small>{result.ref}</div>
+          <div style={{background:'rgba(200,184,232,.06)',border:'1px solid var(--gb)',borderRadius:12,padding:'.85rem',margin:'.7rem 0',display:'flex',alignItems:'center',gap:'.9rem'}}>
+            <QRCode value={result.ref+(deal.fromCode||'')+(deal.toCode||'')}/>
+            <div><div style={{fontSize:'.8rem',fontWeight:600,color:'var(--lav)',marginBottom:'.22rem'}}>📱 Boarding Pass QR</div><div style={{fontSize:'.7rem',color:'var(--lav-mid)'}}>Show this at the airport check-in counter</div></div>
+          </div>
+          <div className="confirm-details">
+            <div>✈ <strong>Route:</strong> {deal.from} → {deal.to}</div>
+            <div>📅 <strong>Date:</strong> {formatDisplay(result.flightDate)}</div>
+            <div>🛫 <strong>Airline:</strong> {deal.airline} · {deal.seats}</div>
+            <div>💺 <strong>Seat:</strong> {result.seat} · {result.passengers} Pax</div>
+            {baggage!=='none'&&<div>🧳 <strong>Baggage:</strong> {baggage} added</div>}
+            {insurance!=='none'&&<div>🛡 <strong>Insurance:</strong> {insurance} plan</div>}
+            {promo&&<div>🎟 <strong>Promo:</strong> {promo.code} applied</div>}
+            {foodCart.length>0&&<div>🍽 <strong>Meals:</strong> {foodCart.map(i=>i.name).join(', ')}</div>}
+            {carbonData&&<div>🌱 <strong>Carbon:</strong> {carbonData.totalCo2} kg CO₂</div>}
+            <div>💰 <strong>Total Paid:</strong> ₹{total.toLocaleString()}</div>
+          </div>
+          <button className="submit-btn" onClick={onClose}>Done ✓</button>
+        </div>
+      </div>
+    </div>
+  );
+
+  return (
+    <div className="overlay" onClick={onClose}>
+      <div className="modal" onClick={e=>e.stopPropagation()}>
+        <button className="modal-x" onClick={onClose}>✕</button>
+        <div className="modal-title">Book Your Flight</div>
+        <div className="modal-sub">📱 No account needed — your phone number is your booking ID</div>
+        <div className="route-disp">
+          <div className="rc-lg">{deal.fromCode}<small>{deal.from}</small></div>
+          <span style={{color:'var(--rose)',fontSize:'1.25rem'}}>✈</span>
+          <div className="rc-lg" style={{textAlign:'right'}}>{deal.toCode}<small>{deal.to}</small></div>
+        </div>
+        {carbonData && (
+          <div style={{background:'rgba(80,200,120,.07)',border:'1px solid rgba(80,200,120,.2)',borderRadius:10,padding:'.5rem .85rem',fontSize:'.75rem',color:'var(--lav-mid)',marginBottom:'.9rem',display:'flex',alignItems:'center',gap:'.5rem'}}>
+            🌱 This flight emits ~<strong style={{color:'var(--green)'}}>{carbonData.co2PerPassenger} kg CO₂</strong> per passenger
+          </div>
+        )}
+        {apiErr && <div className="api-err">⚠ {apiErr}</div>}
+        <div className="fsec">
+          <label>Full Name *</label>
+          <input className={`finput${errors.name?' err':''}`} placeholder="As on government ID" value={form.name} onChange={e=>{set('name',e.target.value);clr('name');}}/>
+          {errors.name&&<div className="errtxt">{errors.name}</div>}
+        </div>
+        <div className="fsec">
+          <label>📱 Mobile Number * <span style={{color:'var(--rose)',fontWeight:400,textTransform:'none',letterSpacing:0,fontSize:'.68rem'}}>(your booking ID)</span></label>
+          <input className={`finput${errors.phone?' err':''}`} placeholder="10-digit e.g. 9876543210" value={form.phone} onChange={e=>{set('phone',e.target.value.replace(/\D/g,'').slice(0,10));clr('phone');}}/>
+          {errors.phone&&<div className="errtxt">{errors.phone}</div>}
+        </div>
+        <div className="frow">
+          <div className="fsec">
+            <label>Email (optional)</label>
+            <input className={`finput${errors.email?' err':''}`} placeholder="you@email.com" value={form.email} onChange={e=>{set('email',e.target.value);clr('email');}}/>
+            {errors.email&&<div className="errtxt">{errors.email}</div>}
+          </div>
+          <div className="fsec">
+            <label>Passengers</label>
+            <select className="finput" value={form.passengers} onChange={e=>set('passengers',e.target.value)}>
+              {[1,2,3,4,5].map(n=><option key={n} value={n}>{n} Pax</option>)}
+            </select>
+          </div>
+        </div>
+
+        <div className="fsec">
+          <label>📅 Flight Date * {errors.flightDate&&<span style={{color:'#E85050',fontWeight:400,textTransform:'none',letterSpacing:0}}>— {errors.flightDate}</span>}</label>
+          <FlightCalendar unavailableDates={unavDates} loading={datesLoading} selected={form.flightDate} onSelect={d=>{set('flightDate',d);clr('flightDate');}}/>
+        </div>
+
+        {form.passengers==='1' && (
+          <div className="fsec">
+            <label>Select Seat {errors.seat&&<span style={{color:'#E85050',fontWeight:400}}>— {errors.seat}</span>}</label>
+            <SeatSelector dealId={deal.id} taken={taken} selected={form.seat} onSelect={s=>{set('seat',s);clr('seat');}}/>
+          </div>
+        )}
+
+        {/* FOOD OPTIONS */}
+        {foodData && (
+          <div style={{marginBottom:'1rem'}}>
+            <button className={`ftab${showFood?' on':''}`} onClick={()=>setShowFood(s=>!s)}>
+              🍽 {showFood?'Hide':'Add'} In-Flight Meals ({foodData.items.length} options)
+            </button>
+            {showFood && (
+              <div className="food-card" style={{marginTop:'.6rem'}}>
+                <div style={{fontSize:'.73rem',color:'var(--lav-mid)',marginBottom:'.6rem'}}>{foodData.airline} · {foodData.seatClass}</div>
+                {foodData.items.map(item=>{
+                  const inCart=foodCart.find(i=>i.name===item.name);
+                  return (
+                    <div key={item.name} className="food-item" onClick={()=>setFoodCart(c=>inCart?c.filter(i=>i.name!==item.name):[...c,item])}
+                      style={{cursor:'pointer',borderColor:inCart?'var(--lav-deep)':undefined}}>
+                      <div className="food-icon">{item.icon}</div>
+                      <div><div className="food-name">{item.name}</div><div className="food-type">{item.type}</div></div>
+                      <div className="food-price">
+                        {item.included?<div className="food-included">✓ Included</div>:<div className="food-price-val">₹{item.price}</div>}
+                        {inCart&&<div style={{fontSize:'.62rem',color:'var(--green)',fontWeight:600}}>✓</div>}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        )}
+
+        <div className="fsec"><label>🎟 Promo Code</label><PromoBox onApply={setPromo} applied={promo}/></div>
+        <div style={{marginBottom:'.9rem'}}>
+          <button className={"ftab"+(showBaggage?' on':'')} onClick={()=>setShowBaggage(s=>!s)}>🧳 {showBaggage?'Hide':'Add'} Extra Baggage</button>
+          {showBaggage&&<div style={{marginTop:'.55rem'}}><BaggageSelector selected={baggage} onSelect={setBaggage}/></div>}
+        </div>
+        <div style={{marginBottom:'.9rem'}}>
+          <button className={"ftab"+(showInsurance?' on':'')} onClick={()=>setShowInsurance(s=>!s)}>🛡 {showInsurance?'Hide':'Add'} Travel Insurance</button>
+          {showInsurance&&<div style={{marginTop:'.55rem'}}><InsuranceSelector selected={insurance} onSelect={setInsurance}/></div>}
+        </div>
+        <div className="price-sum">
+          <div className="prow"><span>Base fare × {form.passengers}</span><span>₹{(deal.price*Number(form.passengers)).toLocaleString()}</span></div>
+          <div className="prow"><span>GST (18%)</span><span>₹{taxes.toLocaleString()}</span></div>
+          {promoDiscount>0&&<div className="prow" style={{color:'var(--green)'}}><span>🎉 Promo ({promo.code})</span><span>−₹{promoDiscount.toLocaleString()}</span></div>}
+          {baggageCost>0&&<div className="prow"><span>🧳 Extra baggage</span><span>+₹{baggageCost.toLocaleString()}</span></div>}
+          {insuranceCost>0&&<div className="prow"><span>🛡 Travel insurance</span><span>+₹{insuranceCost.toLocaleString()}</span></div>}
+          {foodTotal>0&&<div className="prow"><span>🍽 Meal add-ons</span><span>+₹{foodTotal.toLocaleString()}</span></div>}
+          <div className="prow total"><span>Total</span><span>₹{total.toLocaleString()}</span></div>
+        </div>
+        <button className="submit-btn" disabled={loading} onClick={submit}>{loading?'⏳ Booking…':'Confirm Booking →'}</button>
+      </div>
+    </div>
+  );
+}
+
+/* ── SERVICES PAGE ── */
+function ServicesPage() {
+  const tabs = [
+    {id:'status',  label:'🛫 Flight Status'},
+    {id:'weather', label:'🌤 Weather'},
+    {id:'airports',label:'🗺 Nearby Airports'},
+    {id:'terminal',label:'✈ Terminal Map'},
+    {id:'carbon',  label:'🌱 Carbon'},
+    {id:'food',    label:'🍽 Food Options'},
+  ];
+  const [active, setActive] = useState('status');
+  return (
+    <div className="page">
+      <div style={{maxWidth:900,margin:'0 auto',padding:'2rem'}}>
+        <div className="pg-hdr"><h2>Flight Services</h2><p>Live status, weather, terminal info, and more</p></div>
+        <div className="feature-tabs">
+          {tabs.map(t=><div key={t.id} className={`ftab${active===t.id?' on':''}`} onClick={()=>setActive(t.id)}>{t.label}</div>)}
+        </div>
+        {active==='status'   && <FlightStatusPanel/>}
+        {active==='weather'  && <WeatherPanel/>}
+        {active==='airports' && <NearbyAirportsPanel/>}
+        {active==='terminal' && <TerminalPanel/>}
+        {active==='carbon'   && <CarbonCalculator/>}
+        {active==='food'     && <FoodPanel/>}
+      </div>
+    </div>
+  );
+}
+
+/* ── HOME PAGE ── */
+function HomePage({ onBook, onWaitlist }) {
+  const [deals, setDeals]   = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [q, setQ]           = useState('');
+  const [filt, setFilt]     = useState('All');
+  const [recentSearches, setRecentSearches] = useState(()=>{
+    try { return JSON.parse(localStorage.getItem('bmf_recent_searches') || '[]'); } catch { return []; }
+  });
+  const filters = ['All','Economy','Business','Premium Economy'];
+  const load = useCallback(async () => {
+    try { const r=await api('GET','/deals'); setDeals(r.data); } catch {}
+    setLoading(false);
+  },[]);
+  function addSearch(val){
+    const v = val.trim();
+    if (!v) return;
+    setRecentSearches(prev=>{
+      const next = [v, ...prev.filter(s=>s.toLowerCase()!==v.toLowerCase())].slice(0,5);
+      try { localStorage.setItem('bmf_recent_searches', JSON.stringify(next)); } catch {}
+      return next;
+    });
+  }
+  function handleSearch(val){setQ(val);if(val.length>2)addSearch(val);}
+  useEffect(()=>{ load(); const t=setInterval(load,30000); return()=>clearInterval(t); },[]);
+  const shown=deals.filter(d=>{
+    const ql=q.toLowerCase();
+    return (!ql||d.from.toLowerCase().includes(ql)||d.to.toLowerCase().includes(ql)||d.fromCode.toLowerCase().includes(ql)||d.toCode.toLowerCase().includes(ql))
+      &&(filt==='All'||d.seats===filt);
+  });
+  return (
+    <div className="page">
+      <div className="hero">
+        <div className="hero-eye">✦ Live Special Deals — Updated Throughout the Day ✦</div>
+        <h1 className="hero-title">Fly to your<br/><em>Dream Destination</em></h1>
+        <p className="hero-sub">Exclusive fares · No account required · Pick your date · Book with phone number</p>
+      </div>
+      <div className="search-wrap">
+        <div className="search-bar">
+          <span style={{color:'var(--lav-mid)'}}>🔍</span>
+          <input placeholder="Search city or airport code…" value={q} onChange={e=>handleSearch(e.target.value)}/>
+          {q&&<span style={{cursor:'pointer',color:'var(--lav-mid)'}} onClick={()=>setQ('')}>✕</span>}
+        </div>
+        {recentSearches.length>0&&!q&&<div style={{display:'flex',justifyContent:'center',flexWrap:'wrap',marginBottom:'.55rem'}}>{recentSearches.map(s=><div key={s} className="recent-chip" onClick={()=>setQ(s)}>🕐 {s}</div>)}</div>}
+        <div className="filter-row">
+          {filters.map(f=><div key={f} className={`chip${filt===f?' on':''}`} onClick={()=>setFilt(f)}>{f}</div>)}
+        </div>
+      </div>
+      <div className="deals-hdr">
+        <div className="sec-title">Today's Deals</div>
+        <div style={{display:'flex',gap:'.5rem',alignItems:'center',flexWrap:'wrap'}}>
+          <button style={{background:'rgba(155,126,200,.12)',border:'1px solid rgba(155,126,200,.25)',borderRadius:20,padding:'.25rem .75rem',color:'var(--lav-mid)',fontSize:'.7rem',cursor:'pointer',fontFamily:"'DM Sans',sans-serif"}} onClick={onWaitlist}>🔔 Set Price Alert</button>
+          <div className="live-badge"><div className="live-dot"/>LIVE · {shown.length}</div>
+        </div>
+      </div>
+      {loading?<div className="loading"><div className="spin">✈</div><p>Loading deals…</p></div>
+        :shown.length===0?<div className="empty"><div className="eicon">🛫</div><p>No deals match your search</p></div>
+        :<div className="deals-grid">{shown.map(d=><DealCard key={d.id} deal={d} onBook={onBook}/>)}</div>}
+    </div>
+  );
+}
+
+/* ── MY BOOKINGS ── */
+function MyBookingsPage() {
+  const [phone, setPhone] = useState('');
+  const [bookings, setBookings] = useState([]);
+  const [searched, setSearched] = useState(false);
+  const [loading, setLoading]   = useState(false);
+  const [sessionRefs, setSessionRefs] = useState([]);
+  const [profile] = useProfile();
+  useEffect(()=>{ api('GET','/bookings/session').then(r=>setSessionRefs(r.data)).catch(()=>{}); if(profile.phone) setPhone(profile.phone); },[]);
+  async function lookup(){
+    if(!/^[6-9]\d{9}$/.test(phone)) return;
+    setLoading(true);
+    try{ const r=await api('GET',`/bookings?phone=${phone}`); setBookings(r.data); setSearched(true); }catch{}
+    setLoading(false);
+  }
+  return (
+    <div className="page">
+      <div className="pg-wrap">
+        <div className="pg-hdr"><h2>My Bookings</h2><p>Enter the mobile number you used when booking to retrieve your flights</p></div>
+        {sessionRefs.length>0&&<div className="session-note">🍪 <span>Your current session has <strong style={{color:'var(--lav)'}}>{sessionRefs.length}</strong> booking{sessionRefs.length>1?'s':''} — enter your phone to view details</span></div>}
+        <div className="phone-form">
+          <input className="finput" style={{maxWidth:265}} placeholder="10-digit mobile number" value={phone} onChange={e=>setPhone(e.target.value.replace(/\D/g,'').slice(0,10))} onKeyDown={e=>e.key==='Enter'&&lookup()}/>
+          <button className="submit-btn" style={{width:'auto',padding:'.65rem 1.35rem'}} onClick={lookup} disabled={loading}>{loading?'⏳':'Look Up →'}</button>
+        </div>
+        {searched&&bookings.length===0&&<div className="empty"><div className="eicon">🔍</div><p>No bookings found for this number</p></div>}
+        {bookings.map(b=>(
+          <div key={b.id} className="bk-item">
+            <div><div className="bk-ref">{b.ref}</div><div className="badge badge-ok">{b.status}</div></div>
+            <div className="bk-info">
+              <div className="bk-route">{b.from} → {b.to}</div>
+              <div className="bk-det">{b.airline} · {b.seatClass} · Seat {b.seat} · {b.passengers} Pax</div>
+              {b.flightDate&&<div className="flight-date-badge">📅 {formatDisplay(b.flightDate)}</div>}
+              <div className="bk-det" style={{marginTop:'.2rem'}}>Booked: {new Date(b.bookedAt).toLocaleString()}</div>
+            </div>
+            <div className="bk-price">₹{b.total.toLocaleString()}</div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/* ── USER LOGIN (Email + OTP) ── */
+function UserAuthModal({ onClose, onLogin }) {
+  const [step,setStep]=useState('email'); // 'email' | 'code'
+  const [email,setEmail]=useState('');
+  const [code,setCode]=useState('');
+  const [err,setErr]=useState('');
+  const [loading,setLoading]=useState(false);
+  const [cooldown,setCooldown]=useState(0);
+
+  useEffect(()=>{
+    if(cooldown<=0) return;
+    const t=setInterval(()=>setCooldown(c=>Math.max(0,c-1)),1000);
+    return ()=>clearInterval(t);
+  },[cooldown]);
+
+  async function sendCode(){
+    if(cooldown>0||loading) return;
+    if(!email.trim()){setErr('Please enter your email address.');return;}
+    setLoading(true);setErr('');
+    try{
+      await api('POST','/auth/email/request-otp',{email:email.trim()});
+      setStep('code');setCode('');setCooldown(60);
+    }catch(e){setErr(e.message);}
+    finally{setLoading(false);}
+  }
+
+  async function verify(){
+    if(!code.trim()){setErr('Please enter the 6-digit code.');return;}
+    setLoading(true);setErr('');
+    try{
+      const r=await api('POST','/auth/email/verify-otp',{email:email.trim(),code:code.trim()});
+      onLogin(r.email);
+    }catch(e){setErr(e.message);}
+    finally{setLoading(false);}
+  }
+
+  return(
+    <div className="modal-overlay" onClick={e=>e.target===e.currentTarget&&onClose()}>
+      <div className="user-login-card">
+        <button className="modal-close" onClick={onClose}>✕</button>
+        <span className="login-icon">📧</span>
+        <div className="login-title">{step==='email'?'Sign In':'Verify Your Email'}</div>
+        <div className="login-sub">
+          {step==='email'?'Enter your email — we\'ll send you a sign-in code':`We sent a 6-digit code to ${email}`}
+        </div>
+        {err&&<div className="login-err">⚠ {err}</div>}
+        {step==='email'?(
+          <>
+            <div className="fsec" style={{textAlign:'left'}}>
+              <label>Email Address</label>
+              <input className="finput" type="email" placeholder="you@example.com" value={email}
+                onChange={e=>setEmail(e.target.value)} onKeyDown={e=>e.key==='Enter'&&sendCode()} autoFocus/>
+            </div>
+            <button className="submit-btn" disabled={loading} onClick={sendCode}>{loading?'⏳ Sending…':'Send Code →'}</button>
+          </>
+        ):(
+          <>
+            <div className="fsec" style={{textAlign:'left'}}>
+              <label>6-Digit Code</label>
+              <input className="finput otp-input" maxLength={6} inputMode="numeric" placeholder="000000" value={code}
+                onChange={e=>setCode(e.target.value.replace(/\D/g,'').slice(0,6))} onKeyDown={e=>e.key==='Enter'&&verify()} autoFocus/>
+            </div>
+            <div className="resend-row">
+              <button className="change-email-link" onClick={()=>{setStep('email');setCode('');setErr('');}}>← Change email</button>
+              <button className="resend-link" disabled={cooldown>0||loading} onClick={sendCode}>{cooldown>0?`Resend in ${cooldown}s`:'Resend code'}</button>
+            </div>
+            <button className="submit-btn" disabled={loading} onClick={verify}>{loading?'⏳ Verifying…':'Verify & Sign In →'}</button>
+          </>
+        )}
+      </div>
+    </div>
+  );
+}
+
+/* ── ADMIN LOGIN ── */
+function AdminLogin({ onLogin }) {
+  const [user,setUser]=useState('');const [pass,setPass]=useState('');
+  const [show,setShow]=useState(false);const [err,setErr]=useState('');const [loading,setLoading]=useState(false);
+  async function attempt(){setLoading(true);setErr('');try{await api('POST','/auth/login',{username:user,password:pass});onLogin();}catch(e){setErr(e.message);}finally{setLoading(false);}}
+  return(
+    <div className="admin-login-wrap">
+      <div className="admin-login-card">
+        <span className="login-icon">🔐</span>
+        <div className="login-title">Admin Portal</div>
+        <div className="login-sub">Sign in to manage deals and view bookings</div>
+        {err&&<div className="login-err">⚠ {err}</div>}
+        <div className="fsec" style={{textAlign:'left'}}>
+          <label>Username</label>
+          <input className="finput" placeholder="admin" value={user} onChange={e=>setUser(e.target.value)} onKeyDown={e=>e.key==='Enter'&&attempt()}/>
+        </div>
+        <div className="fsec" style={{textAlign:'left'}}>
+          <label>Password</label>
+          <div style={{position:'relative'}}>
+            <input className="finput" type={show?'text':'password'} placeholder="••••••••" value={pass} onChange={e=>setPass(e.target.value)} onKeyDown={e=>e.key==='Enter'&&attempt()} style={{paddingRight:'2.5rem'}}/>
+            <span style={{position:'absolute',right:'.8rem',top:'50%',transform:'translateY(-50%)',cursor:'pointer',color:'var(--lav-mid)',fontSize:'.8rem'}} onClick={()=>setShow(s=>!s)}>{show?'🙈':'👁'}</span>
+          </div>
+        </div>
+        <button className="submit-btn" disabled={loading} onClick={attempt}>{loading?'⏳ Signing in…':'Sign In →'}</button>
+      </div>
+    </div>
+  );
+}
+
+/* ── ADMIN DASHBOARD ── */
+function AdminDashboard({ onLogout, onToast }) {
+  const blank={from:'',fromCode:'',to:'',toCode:'',price:'',airline:'',seats:'Economy',duration:'',expiresInSeconds:'3600',featured:false};
+  const [deals,setDeals]=useState([]);const [bookings,setBookings]=useState([]);
+  const [form,setForm]=useState(blank);const [editId,setEditId]=useState(null);
+  const [errors,setErrors]=useState({});const [apiErr,setApiErr]=useState('');
+  const [loading,setLoading]=useState(true);const [view,setView]=useState('deals');
+  const load=useCallback(async()=>{
+    setLoading(true);
+    try{const[d,b]=await Promise.all([api('GET','/admin/deals'),api('GET','/admin/bookings')]);setDeals(d.data);setBookings(b.data);}catch{}
+    setLoading(false);
+  },[]);
+  useEffect(()=>{load();},[]);
+  function validate(){const e={};if(!form.from.trim())e.from=true;if(!form.fromCode.trim())e.fromCode=true;if(!form.to.trim())e.to=true;if(!form.toCode.trim())e.toCode=true;if(!form.price||isNaN(form.price)||Number(form.price)<1)e.price=true;if(!form.airline.trim())e.airline=true;if(!form.duration.trim())e.duration=true;return e;}
+  async function save(){const e=validate();if(Object.keys(e).length){setErrors(e);return;}
+    try{if(editId){await api('PUT',`/admin/deals/${editId}`,{...form,price:Number(form.price),expiresInSeconds:Number(form.expiresInSeconds)});onToast('Deal updated ✓');}
+    else{await api('POST','/admin/deals',{...form,price:Number(form.price),expiresInSeconds:Number(form.expiresInSeconds)});onToast('Deal created ✓');}
+    setForm(blank);setEditId(null);setErrors({});load();}catch(err){setApiErr(err.message);}
+  }
+  async function remove(id){try{await api('DELETE',`/admin/deals/${id}`);onToast('Deal deleted');load();}catch(err){setApiErr(err.message);}}
+  function edit(d){setForm({...d,price:String(d.price),expiresInSeconds:String(d.expiresInSeconds||3600)});setEditId(d.id);}
+  const sf=(k,v)=>{setForm(f=>({...f,[k]:v}));setErrors(e=>({...e,[k]:false}));};
+  function inp(k,ph,lbl){return(<div className="fsec">{lbl&&<label>{lbl}</label>}<input className={`finput${errors[k]?' err':''}`} placeholder={ph} value={form[k]} onChange={e=>sf(k,e.target.value)}/></div>);}
+  const revenue=bookings.reduce((s,b)=>s+(b.total||0),0);
+  return(
+    <div className="page">
+      <div className="admin-wrap">
+        <div className="pg-hdr" style={{display:'flex',alignItems:'flex-start',justifyContent:'space-between',flexWrap:'wrap',gap:'1rem'}}>
+          <div><h2>Admin Dashboard</h2><p style={{color:'var(--lav-mid)'}}>Manage deals · Monitor bookings · Session active 🔒</p></div>
+          <button className="logout-btn" onClick={onLogout}>🔓 Logout</button>
+        </div>
+        <div className="stats-row">
+          <div className="stat-card"><div className="stat-val">{deals.length}</div><div className="stat-lbl">Total Deals</div></div>
+          <div className="stat-card"><div className="stat-val">{deals.filter(d=>d.secondsLeft>0).length}</div><div className="stat-lbl">Active Deals</div></div>
+          <div className="stat-card"><div className="stat-val">{bookings.length}</div><div className="stat-lbl">Bookings</div></div>
+          <div className="stat-card"><div className="stat-val">₹{(revenue/1000).toFixed(1)}K</div><div className="stat-lbl">Revenue</div></div>
+        </div>
+        {apiErr&&<div className="api-err">⚠ {apiErr}</div>}
+        <div style={{display:'flex',gap:'.42rem',marginBottom:'1.3rem',flexWrap:'wrap'}}>
+          <div className={`chip${view==='deals'?' on':''}`} onClick={()=>setView('deals')}>Manage Deals</div>
+          <div className={`chip${view==='bookings'?' on':''}`} onClick={()=>setView('bookings')}>Bookings ({bookings.length})</div>
+          <div className={`chip${view==='analytics'?' on':''}`} onClick={()=>setView('analytics')}>📊 Analytics</div>
+        </div>
+        {view==='analytics' && <AnalyticsPanel/>}
+        {view==='deals'&&(
+          <div className="admin-grid">
+            <div className="aform-card">
+              <div className="aform-title">{editId?'✏️ Edit Deal':'＋ Create New Deal'}</div>
+              <div className="frow">{inp('from','e.g. Mumbai','From City')}{inp('fromCode','e.g. BOM','IATA Code')}</div>
+              <div className="frow">{inp('to','e.g. Delhi','To City')}{inp('toCode','e.g. DEL','IATA Code')}</div>
+              <div className="frow">
+                <div className="fsec"><label>Price (₹)</label><input className={`finput${errors.price?' err':''}`} placeholder="4299" value={form.price} onChange={e=>sf('price',e.target.value)}/></div>
+                {inp('airline','e.g. IndiGo','Airline')}
+              </div>
+              <div className="frow">
+                <div className="fsec"><label>Class</label><select className="finput" value={form.seats} onChange={e=>sf('seats',e.target.value)}><option>Economy</option><option>Business</option><option>Premium Economy</option></select></div>
+                {inp('duration','e.g. 2h 30m','Duration')}
+              </div>
+              <div className="fsec"><label>Expires In</label>
+                <select className="finput" value={form.expiresInSeconds} onChange={e=>sf('expiresInSeconds',e.target.value)}>
+                  <option value="900">15 minutes</option><option value="1800">30 minutes</option>
+                  <option value="3600">1 hour</option><option value="7200">2 hours</option>
+                  <option value="10800">3 hours</option><option value="21600">6 hours</option>
+                </select>
+              </div>
+              <div className="fsec" style={{display:'flex',alignItems:'center',gap:'.6rem'}}>
+                <input type="checkbox" id="feat" checked={form.featured} onChange={e=>sf('featured',e.target.checked)} style={{accentColor:'var(--purple)',width:14,height:14}}/>
+                <label htmlFor="feat" style={{textTransform:'none',fontSize:'.8rem',color:'var(--lav-mid)',letterSpacing:0}}>Featured (Hot Deal ⭐)</label>
+              </div>
+              <div style={{display:'flex',gap:'.45rem'}}>
+                <button className="submit-btn" style={{flex:1}} onClick={save}>{editId?'Update Deal':'Create Deal'}</button>
+                {editId&&<button className="ibtn" style={{padding:'.65rem .95rem'}} onClick={()=>{setForm(blank);setEditId(null);}}>✕</button>}
+              </div>
+            </div>
+            <div>
+              <div style={{color:'var(--lav)',fontWeight:600,marginBottom:'.9rem',fontSize:'.9rem'}}>All Deals ({deals.length})</div>
+              {loading?<div className="loading"><div className="spin">⏳</div></div>:(
+                <div className="admin-list">
+                  {deals.length===0&&<div style={{color:'var(--lav-mid)',fontSize:'.85rem'}}>No deals yet</div>}
+                  {deals.map(d=>(
+                    <div key={d.id} className="admin-item">
+                      <div className="ai-route"><strong>{d.fromCode} → {d.toCode}</strong><small>{d.from} → {d.to} · {d.airline} · {d.seats}</small></div>
+                      <div><div className="ai-price">₹{d.price.toLocaleString()}</div><div className="ai-exp">{d.secondsLeft>0?`⏱ ${Math.floor(d.secondsLeft/60)}m left`:'⛔ Expired'}</div></div>
+                      <div className="ai-actions">
+                        <button className="ibtn" onClick={()=>edit(d)}>✏️</button>
+                        <button className="ibtn del" onClick={()=>remove(d.id)}>🗑</button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+        {view==='bookings'&&(
+          loading?<div className="loading"><div className="spin">⏳</div></div>
+          :bookings.length===0?<div className="empty"><div className="eicon">📋</div><p>No bookings yet</p></div>
+          :<div style={{overflowX:'auto'}}>
+            <table className="ab-table">
+              <thead><tr><th>Ref</th><th>Route</th><th>Flight Date</th><th>Passenger</th><th>Phone</th><th>Class</th><th>Seat</th><th>Pax</th><th>Total</th></tr></thead>
+              <tbody>
+                {bookings.map(b=>(
+                  <tr key={b.id}>
+                    <td><strong style={{color:'var(--rose)'}}>{b.ref}</strong></td>
+                    <td>{b.fromCode} → {b.toCode}</td>
+                    <td><span style={{color:'var(--lav-mid)',fontSize:'.75rem'}}>📅 {b.flightDate?formatDisplay(b.flightDate):'—'}</span></td>
+                    <td>{b.name}</td><td>{b.phone}</td><td>{b.seatClass}</td><td>{b.seat}</td><td>{b.passengers}</td>
+                    <td>₹{b.total.toLocaleString()}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+/* ── APP ── */
+function App() {
+  const [tab,setTab]=useState('home');
+  const [bookingDeal,setBookingDeal]=useState(null);
+  const [toast,setToast]=useState('');
+  const [adminLoggedIn,setAdminLoggedIn]=useState(false);
+  const [userLoggedIn,setUserLoggedIn]=useState(false);
+  const [userEmail,setUserEmail]=useState('');
+  const [showUserAuth,setShowUserAuth]=useState(false);
+  const [showWaitlist,setShowWaitlist]=useState(false);
+  const [sessionChecked,setSessionChecked]=useState(false);
+  const [chatOpen,setChatOpen]=useState(false);
+
+  useEffect(()=>{
+    Promise.allSettled([
+      api('GET','/auth/status').then(r=>setAdminLoggedIn(r.isAdmin)),
+      api('GET','/auth/email/status').then(r=>{ if(r.loggedIn){ setUserLoggedIn(true); setUserEmail(r.email); } }),
+    ]).finally(()=>setSessionChecked(true));
+  },[]);
+
+  function showToast(msg){setToast(msg);setTimeout(()=>setToast(''),3000);}
+  async function handleLogout(){try{await api('POST','/auth/logout');}catch{}setAdminLoggedIn(false);setTab('home');showToast('Logged out successfully');}
+  async function handleUserLogout(){try{await api('POST','/auth/email/logout');}catch{}setUserLoggedIn(false);setUserEmail('');showToast('Signed out successfully');}
+
+  if(!sessionChecked) return(
+    <div style={{display:'flex',alignItems:'center',justifyContent:'center',minHeight:'100vh',color:'var(--lav-mid)'}}>
+      <div style={{textAlign:'center'}}><div style={{fontSize:'2rem',marginBottom:'.5rem'}}>✈</div><div>Loading…</div></div>
+    </div>
+  );
+
+  const tabs=[
+    {id:'home',label:'✈ Deals'},
+    {id:'multicity',label:'🗺 Multi-City'},
+    {id:'services',label:'🛫 Services'},
+    {id:'bookings',label:'📋 My Bookings'},
+    {id:'admin',label:'⚙ Admin'},
+  ];
+
+  return(
+    <>
+      <nav className="nav">
+        <div className="nav-logo">✈ BookMyFlight</div>
+        <div className="nav-tabs">
+          {tabs.map(t=>(
+            <button key={t.id} className={`nav-tab${tab===t.id?' active':''}`} onClick={()=>setTab(t.id)}>
+              {t.label}
+              {t.id==='admin'&&adminLoggedIn&&<span style={{marginLeft:'.28rem',fontSize:'.6rem',color:'#50C878'}}>●</span>}
+            </button>
+          ))}
+        </div>
+        <div className="nav-right">
+          {tab!=='admin'&&(
+            <div style={{display:'flex',alignItems:'center',gap:'.5rem'}}>
+              <div className="session-pill">📱 Book with phone</div>
+              {userLoggedIn?(
+                <>
+                  <div className="email-pill" title={userEmail}>👤 {userEmail}</div>
+                  <button className="logout-btn" onClick={handleUserLogout}>Logout</button>
+                </>
+              ):(
+                <button className="signin-btn" onClick={()=>setShowUserAuth(true)}>👤 Sign In</button>
+              )}
+            </div>
+          )}
+          {tab==='admin'&&adminLoggedIn&&(<div style={{display:'flex',alignItems:'center',gap:'.5rem'}}><div className="session-pill">🔒 Active</div><button className="logout-btn" onClick={handleLogout}>Logout</button></div>)}
+        </div>
+      </nav>
+
+      {tab==='home'     && <HomePage onBook={d=>setBookingDeal(d)} onWaitlist={()=>setShowWaitlist(true)}/>}
+      {tab==='multicity'&& <MultiCityPage/>}
+      {tab==='services' && <ServicesPage onBook={d=>setBookingDeal(d)}/>}
+      {tab==='bookings' && <MyBookingsPage/>}
+      {tab==='admin'    && (adminLoggedIn?<AdminDashboard onLogout={handleLogout} onToast={showToast}/>:<AdminLogin onLogin={()=>setAdminLoggedIn(true)}/>)}
+
+      {bookingDeal&&(
+        <BookingModal deal={bookingDeal} onClose={()=>setBookingDeal(null)} onConfirm={ref=>showToast(`✈ Booking confirmed! Ref: ${ref}`)}/>
+      )}
+
+      {showUserAuth && (
+        <UserAuthModal
+          onClose={()=>setShowUserAuth(false)}
+          onLogin={email=>{setUserLoggedIn(true);setUserEmail(email);setShowUserAuth(false);showToast(`Welcome, ${email}! 🎉`);}}
+        />
+      )}
+
+      {/* CHATBOT */}
+      {showWaitlist && <WaitlistModal onClose={()=>setShowWaitlist(false)} onToast={showToast}/>}
+      {chatOpen && <Chatbot onClose={()=>setChatOpen(false)}/>}
+      {!chatOpen && <button className="chatbot-fab" onClick={()=>setChatOpen(true)} title="Travel Assistant">🤖</button>}
+
+      {toast&&<div className="toast">{toast}</div>}
+    </>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+</body>
+</html>
