@@ -1,6 +1,4 @@
-# ✈ Book My Flight — Enhanced Edition
-
-## New Features Added
+# ✈ Book My Flight
 
 ### Frontend Features
 1. **Flexible Date Search** — Calendar view of cheapest fares across 30 days (green = low-fare days), clickable to auto-select
@@ -37,28 +35,6 @@ npm start
 # → http://localhost:3000
 # Admin: username=admin, password=bmf@2026
 ```
-
-## Deploying to Vercel (Free Tier)
-
-This project is structured to deploy as a single Vercel project:
-- `api/index.js` — the Express API, deployed as a serverless function
-- `client/public/` — the static frontend, served directly by Vercel
-- `vercel.json` — routes `/api/*` to the function, everything else to the SPA
-
-Steps:
-1. Push this repo to GitHub.
-2. In Vercel, **New Project** → import the repo. Framework preset: "Other".
-3. Add Environment Variables (Project Settings → Environment Variables):
-   - `MONGODB_URI` — your MongoDB Atlas connection string
-   - `SESSION_SECRET` — a long random string (used to sign auth cookies)
-   - `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`, `FROM_EMAIL`, `FROM_NAME` — optional, for OTP emails (without these, OTP codes are logged to the Vercel function logs instead of emailed)
-   - `OTP_EXPIRY_MINUTES` — optional, defaults to 10
-4. Deploy.
-5. Run the seed script once against your Atlas database (from your local machine, with `.env` pointing at the same `MONGODB_URI`) so the Deals page isn't empty: `npm run seed`.
-
-### Why some things changed for Vercel
-- **Deals & bookings** used to be stored in local JSON files. Vercel's filesystem is read-only and ephemeral, so they were migrated to MongoDB Atlas (the same database already used for customer accounts).
-- **Login (admin + customer OTP)** used to rely on `express-session` with in-memory storage. Vercel functions are stateless — each request can hit a different, fresh instance — so in-memory sessions would log users out instantly. Login now uses a signed JWT stored in an httpOnly cookie, which carries the session state itself and needs no server memory.
 
 ## Navigation
 - **✈ Deals** — Browse and book flights
